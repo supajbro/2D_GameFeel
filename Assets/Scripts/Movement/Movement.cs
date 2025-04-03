@@ -122,8 +122,6 @@ public class Movement : MonoBehaviour
             SetState(CharacterStates.Fall);
         }
 
-        m_xMovement = m_moveInput.x * m_speed * Time.deltaTime;
-
         ResetJumpStats();
     }
 
@@ -131,16 +129,8 @@ public class Movement : MonoBehaviour
     {
         if (m_jumpTimer > 0.5f)
         {
-            if (m_moveInput.x == 0 && IsGrounded())
+            if (Landed())
             {
-                SetState(CharacterStates.Idle);
-                m_yMovement = 0.0f;
-                return;
-            }
-            else if (IsGrounded())
-            {
-                SetState(CharacterStates.Walk);
-                m_yMovement = 0.0f;
                 return;
             }
         }
@@ -161,23 +151,12 @@ public class Movement : MonoBehaviour
         m_moveInput.y += m_currentJumpHeight * Time.deltaTime;
 
         m_yMovement = m_moveInput.y * m_jumpHeight;
-
-        // Allow x movement in the air
-        m_xMovement = m_moveInput.x * m_speed * Time.deltaTime;
     }
 
     private void FallUpdate()
     {
-        if (m_moveInput.x == 0 && IsGrounded())
+        if (Landed())
         {
-            SetState(CharacterStates.Idle);
-            m_yMovement = 0.0f;
-            return;
-        }
-        else if (IsGrounded())
-        {
-            SetState(CharacterStates.Walk);
-            m_yMovement = 0.0f;
             return;
         }
 
@@ -185,9 +164,23 @@ public class Movement : MonoBehaviour
         m_moveInput.y -= m_currentJumpHeight * Time.deltaTime;
 
         m_yMovement = m_moveInput.y * m_jumpHeight;
+    }
 
-        // Allow x movement in the air
-        m_xMovement = m_moveInput.x * m_speed * Time.deltaTime;
+    private bool Landed()
+    {
+        if (m_moveInput.x == 0 && IsGrounded())
+        {
+            SetState(CharacterStates.Idle);
+            m_yMovement = 0.0f;
+            return true;
+        }
+        else if (IsGrounded())
+        {
+            SetState(CharacterStates.Walk);
+            m_yMovement = 0.0f;
+            return true;
+        }
+        return false;
     }
 
     private void Update()
@@ -195,6 +188,7 @@ public class Movement : MonoBehaviour
         IsGrounded();
         StateUpdate();
 
+        m_xMovement = m_moveInput.x * m_speed * Time.deltaTime;
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
     }
