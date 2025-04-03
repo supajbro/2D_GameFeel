@@ -26,12 +26,16 @@ public class Movement : MonoBehaviour
     private CharacterController m_controller;
 
     [Header("Movement Values")]
-    [SerializeField] private float m_speed = 5.0f;
+    [SerializeField] private float m_groundedSpeed = 5.0f;
+    [SerializeField] private float m_airSpeed = 2.5f;
+    [SerializeField] private float m_currentSpeed = 0.0f;
+    [SerializeField] private float m_maxSpeed = 10.0f;
+    [SerializeField] private float m_increaseSpeed = 5.0f;
+    [SerializeField] private float m_decreaseSpeed = 5.0f;
+    private float m_movementSpeed = 0.0f;
 
     [Header("Jump Values")]
     [SerializeField] private float m_jumpHeight = 5.0f;
-    [SerializeField] private float m_currentJumpHeight = 0.0f;
-    [SerializeField] private float m_minJumpHeight = 2.0f;
     [SerializeField] private float m_maxJumpHeight = 10.0f;
     [SerializeField] private float m_maxJumpTimer = 1.0f;
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
@@ -124,6 +128,8 @@ public class Movement : MonoBehaviour
             SetState(CharacterStates.Fall);
         }
 
+        m_movementSpeed = m_groundedSpeed;
+
         ResetJumpStats();
     }
 
@@ -149,10 +155,12 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
-        m_moveInput.y += m_currentJumpHeight * Time.deltaTime;
+        //m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
+        m_moveInput.y += m_jumpHeightIncreaseSpeed * Time.deltaTime;
 
         m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
+
+        m_movementSpeed = m_airSpeed;
     }
 
     private void FallUpdate()
@@ -162,10 +170,12 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
-        m_moveInput.y -= m_currentJumpHeight * Time.deltaTime;
+        //m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
+        m_moveInput.y -= m_jumpHeightDecreaseSpeed * Time.deltaTime;
 
         m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
+
+        m_movementSpeed = m_airSpeed;
     }
 
     private bool Landed()
@@ -190,7 +200,20 @@ public class Movement : MonoBehaviour
         IsGrounded();
         StateUpdate();
 
-        m_xMovement = m_moveInput.x * m_speed * Time.deltaTime;
+        if(m_moveInput.x == 0)
+        {
+            m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
+        }
+        else if(m_currentSpeed < m_maxSpeed /*&& m_currentState == CharacterStates.Walk*/)
+        {
+            m_currentSpeed += Time.deltaTime * m_increaseSpeed;
+        }
+        //else if (m_currentState == CharacterStates.Jump || m_currentState == CharacterStates.Fall)
+        //{
+        //    m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
+        //}
+
+        m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
     }
@@ -220,7 +243,6 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_currentJumpHeight = 0.0f;
         m_jumpTimer = 0.0f;
         m_fallDelay = 0.0f;
         SetState(CharacterStates.Jump);
@@ -231,7 +253,6 @@ public class Movement : MonoBehaviour
         m_yMovement = 0.0f;
         m_moveInput.y = 0.0f;
         m_jumpTimer = 0.0f;
-        m_currentJumpHeight = 0.0f;
         m_fallDelay = 0.0f;
     }
 
