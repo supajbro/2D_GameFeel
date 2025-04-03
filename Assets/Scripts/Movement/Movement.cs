@@ -33,6 +33,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_increaseSpeed = 5.0f;
     [SerializeField] private float m_decreaseSpeed = 5.0f;
     private float m_movementSpeed = 0.0f;
+    private int m_previousDirection = -1;
 
     [Header("Jump Values")]
     [SerializeField] private float m_jumpHeight = 5.0f;
@@ -204,15 +205,18 @@ public class Movement : MonoBehaviour
         {
             m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
         }
-        else if(m_currentSpeed < m_maxSpeed /*&& m_currentState == CharacterStates.Walk*/)
+        else if(m_currentSpeed < m_maxSpeed)
         {
             m_currentSpeed += Time.deltaTime * m_increaseSpeed;
         }
-        //else if (m_currentState == CharacterStates.Jump || m_currentState == CharacterStates.Fall)
-        //{
-        //    m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
-        //}
 
+        // Check if changed direction and decrease acceleration if so
+        if((int)m_moveInput.x != m_previousDirection)
+        {
+            m_currentSpeed = Mathf.Max(0, m_currentSpeed / 2);
+        }
+
+        m_previousDirection = (int)m_moveInput.x;
         m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
@@ -224,7 +228,6 @@ public class Movement : MonoBehaviour
 
         if (Physics.Raycast(transform.position, Vector3.down, GroundRayLength))
         {
-            Debug.Log("Hit");
             return true;
         }
 
