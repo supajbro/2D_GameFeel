@@ -68,6 +68,8 @@ public class Movement : MonoBehaviour
 
         // Jumping
         m_controls.Player.Jump.performed += ctx => PressedJump();
+
+        Application.targetFrameRate = 60;
     }
 
     private void OnDisable()
@@ -150,7 +152,7 @@ public class Movement : MonoBehaviour
         m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
         m_moveInput.y += m_currentJumpHeight * Time.deltaTime;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight;
+        m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
     }
 
     private void FallUpdate()
@@ -160,10 +162,10 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_currentJumpHeight = (m_currentJumpHeight > m_minJumpHeight) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : m_minJumpHeight;
+        m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
         m_moveInput.y -= m_currentJumpHeight * Time.deltaTime;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight;
+        m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
     }
 
     private bool Landed()
@@ -213,7 +215,12 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_currentJumpHeight = m_minJumpHeight;
+        if(m_currentState != CharacterStates.Walk && m_currentState != CharacterStates.Idle)
+        {
+            return;
+        }
+
+        m_currentJumpHeight = 0.0f;
         m_jumpTimer = 0.0f;
         m_fallDelay = 0.0f;
         SetState(CharacterStates.Jump);

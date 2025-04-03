@@ -208,13 +208,13 @@ MonoBehaviour:
   m_currentState: 0
   m_previousState: 1
   m_speed: 5
-  m_jumpHeight: 1.5
+  m_jumpHeight: 2
   m_currentJumpHeight: 0
-  m_minJumpHeight: 0.1
-  m_maxJumpHeight: 0.3
-  m_maxJumpTimer: 0.15
-  m_jumpHeightIncreaseSpeed: 15
-  m_jumpHeightDecreaseSpeed: -7.5
+  m_minJumpHeight: 50
+  m_maxJumpHeight: 100
+  m_maxJumpTimer: 0.2
+  m_jumpHeightIncreaseSpeed: 350
+  m_jumpHeightDecreaseSpeed: -500
   m_fallDelay: 0
   m_maxFallDelay: 0.2
 --- !u!4 &282978770
