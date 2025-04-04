@@ -42,6 +42,11 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
     [SerializeField] private float m_jumpHeightDecreaseSpeed = 10.0f;
     private float m_jumpTimer = 0.0f;
+
+    [Header("Raycasts")]
+    [SerializeField] private Transform m_leftPosition;
+    [SerializeField] private Transform m_middlePosition;
+    [SerializeField] private Transform m_rightPosition;
     private const float GroundRayLength = 0.7f;
 
     [Header("Fall Values")]
@@ -234,9 +239,21 @@ public class Movement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        Debug.DrawRay(transform.position, Vector2.down * GroundRayLength, Color.red);
+        Debug.DrawRay(m_leftPosition.position, Vector2.down * GroundRayLength, Color.red);
+        Debug.DrawRay(m_middlePosition.position, Vector2.down * GroundRayLength, Color.red);
+        Debug.DrawRay(m_rightPosition.position, Vector2.down * GroundRayLength, Color.red);
 
-        if (Physics.Raycast(transform.position, Vector3.down, GroundRayLength))
+        if (Physics.Raycast(m_leftPosition.position, Vector3.down, GroundRayLength))
+        {
+            return true;
+        }
+
+        if (Physics.Raycast(m_middlePosition.position, Vector3.down, GroundRayLength))
+        {
+            return true;
+        }
+
+        if (Physics.Raycast(m_rightPosition.position, Vector3.down, GroundRayLength))
         {
             return true;
         }
