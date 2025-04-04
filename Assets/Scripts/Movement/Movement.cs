@@ -73,8 +73,6 @@ public class Movement : MonoBehaviour
 
         // Jumping
         m_controls.Player.Jump.performed += ctx => PressedJump();
-
-        Application.targetFrameRate = 60;
     }
 
     private void OnDisable()
@@ -134,6 +132,7 @@ public class Movement : MonoBehaviour
         ResetJumpStats();
     }
 
+    float m_currentJumpHeight = 0f;
     private void JumpUpdate()
     {
         if (m_jumpTimer > 0.5f)
@@ -157,9 +156,11 @@ public class Movement : MonoBehaviour
         }
 
         //m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
-        m_moveInput.y += m_jumpHeightIncreaseSpeed * Time.deltaTime;
+        //m_moveInput.y += m_jumpHeightIncreaseSpeed * Time.deltaTime;
+        m_moveInput.y = 1;
+        m_currentJumpHeight += Time.deltaTime * m_jumpHeightIncreaseSpeed;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight /** Time.deltaTime*/;
+        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightIncreaseSpeed;
 
         m_movementSpeed = m_airSpeed;
     }
@@ -172,9 +173,11 @@ public class Movement : MonoBehaviour
         }
 
         //m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
-        m_moveInput.y -= m_jumpHeightDecreaseSpeed * Time.deltaTime;
+        //m_moveInput.y -= m_jumpHeightDecreaseSpeed * Time.deltaTime;
+        m_moveInput.y = -1;
+        m_currentJumpHeight -= Time.deltaTime * m_jumpHeightIncreaseSpeed;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight /** Time.deltaTime*/;
+        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightDecreaseSpeed;
 
         m_movementSpeed = m_airSpeed;
     }
@@ -198,6 +201,15 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Application.targetFrameRate = 60;
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            Application.targetFrameRate = 250;
+        }
+
         IsGrounded();
         StateUpdate();
 
@@ -242,6 +254,11 @@ public class Movement : MonoBehaviour
         }
 
         if(m_currentState != CharacterStates.Walk && m_currentState != CharacterStates.Idle)
+        {
+            return;
+        }
+
+        if(m_currentState == CharacterStates.Jump)
         {
             return;
         }
