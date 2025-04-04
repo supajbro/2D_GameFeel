@@ -42,6 +42,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
     [SerializeField] private float m_jumpHeightDecreaseSpeed = 10.0f;
     private float m_jumpTimer = 0.0f;
+    private const float GroundRayLength = 0.7f;
 
     [Header("Fall Values")]
     [SerializeField] private float m_fallDelay = 0.0f;
@@ -52,9 +53,6 @@ public class Movement : MonoBehaviour
     private float m_xMovement = 0.0f;
     private float m_yMovement = 0.0f;
     private Vector3 m_playerPos = Vector3.zero;
-
-    [Header("Const Values")]
-    private const float GroundRayLength = 0.55f;
 
     private void Awake()
     {
@@ -187,13 +185,13 @@ public class Movement : MonoBehaviour
         if (m_moveInput.x == 0 && IsGrounded())
         {
             SetState(CharacterStates.Idle);
-            m_yMovement = 0.0f;
+            //m_yMovement = 0.0f;
             return true;
         }
         else if (IsGrounded())
         {
             SetState(CharacterStates.Walk);
-            m_yMovement = 0.0f;
+            //m_yMovement = 0.0f;
             return true;
         }
         return false;
