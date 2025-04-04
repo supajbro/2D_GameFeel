@@ -159,7 +159,7 @@ public class Movement : MonoBehaviour
         //m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
         m_moveInput.y += m_jumpHeightIncreaseSpeed * Time.deltaTime;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
+        m_yMovement = m_moveInput.y * m_jumpHeight /** Time.deltaTime*/;
 
         m_movementSpeed = m_airSpeed;
     }
@@ -174,7 +174,7 @@ public class Movement : MonoBehaviour
         //m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
         m_moveInput.y -= m_jumpHeightDecreaseSpeed * Time.deltaTime;
 
-        m_yMovement = m_moveInput.y * m_jumpHeight * Time.deltaTime;
+        m_yMovement = m_moveInput.y * m_jumpHeight /** Time.deltaTime*/;
 
         m_movementSpeed = m_airSpeed;
     }
@@ -246,8 +246,6 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        m_jumpTimer = 0.0f;
-        m_fallDelay = 0.0f;
         SetState(CharacterStates.Jump);
     }
 
