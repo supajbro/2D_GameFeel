@@ -23,6 +23,7 @@ public class Movement : MonoBehaviour
 
     [Header("Main Components")]
     [SerializeField] private PlayerControls m_controls;
+    [SerializeField] private SquashAndStretchController m_squashAndStretch;
     private CharacterController m_controller;
 
     [Header("Movement Values")]
@@ -93,7 +94,7 @@ public class Movement : MonoBehaviour
                 break;
 
             case CharacterStates.Walk:
-                MovementUpdate();
+                WalkUpdate();
                 break;
 
             case CharacterStates.Jump:
@@ -108,7 +109,14 @@ public class Movement : MonoBehaviour
 
     private void IdleUpdate()
     {
-        if(m_moveInput.x != 0 && IsGrounded())
+        if (m_previousState != m_currentState)
+        {
+            Debug.Log("AssIdle");
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
+            m_previousState = m_currentState;
+        }
+
+        if (m_moveInput.x != 0 && IsGrounded())
         {
             SetState(CharacterStates.Walk);
         }
@@ -120,9 +128,15 @@ public class Movement : MonoBehaviour
         ResetJumpStats();
     }
 
-    private void MovementUpdate()
+    private void WalkUpdate()
     {
-        if(m_moveInput.x == 0 && IsGrounded())
+        if (m_previousState != m_currentState)
+        {
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Walk);
+            m_previousState = m_currentState;
+        }
+
+        if (m_moveInput.x == 0 && IsGrounded())
         {
             SetState(CharacterStates.Idle);
         }
@@ -138,6 +152,12 @@ public class Movement : MonoBehaviour
 
     private void JumpUpdate()
     {
+        if (m_previousState != m_currentState)
+        {
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Jump);
+            m_previousState = m_currentState;
+        }
+
         // Has player landed?
         if (m_jumpTimer > 0.5f)
         {
@@ -163,7 +183,6 @@ public class Movement : MonoBehaviour
         m_moveInput.y = 1;
         m_currentJumpHeight = Time.deltaTime * m_jumpHeightIncreaseSpeed;
         m_jumpHeight = m_jumpHeightIncreaseSpeed;
-        //m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightIncreaseSpeed;
 
         // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
@@ -171,6 +190,12 @@ public class Movement : MonoBehaviour
 
     private void FallUpdate()
     {
+        if (m_previousState != m_currentState)
+        {
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Fall);
+            m_previousState = m_currentState;
+        }
+
         if (Landed())
         {
             return;
@@ -180,7 +205,6 @@ public class Movement : MonoBehaviour
         m_moveInput.y = -1;
         m_currentJumpHeight = Time.deltaTime * m_jumpHeightDecreaseSpeed;
         m_jumpHeight = m_jumpHeightDecreaseSpeed;
-        //m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightDecreaseSpeed;
 
         // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
