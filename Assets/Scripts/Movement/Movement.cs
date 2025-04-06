@@ -111,7 +111,6 @@ public class Movement : MonoBehaviour
     {
         if (m_previousState != m_currentState)
         {
-            Debug.Log("AssIdle");
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
             m_previousState = m_currentState;
         }
