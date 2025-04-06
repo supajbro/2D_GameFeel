@@ -42,12 +42,13 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
     [SerializeField] private float m_jumpHeightDecreaseSpeed = 10.0f;
     private float m_jumpTimer = 0.0f;
+    private float m_currentJumpHeight = 0f;
 
     [Header("Raycasts")]
     [SerializeField] private Transform m_leftPosition;
     [SerializeField] private Transform m_middlePosition;
     [SerializeField] private Transform m_rightPosition;
-    private const float GroundRayLength = 0.7f;
+    private const float GroundRayLength = 0.6f;
 
     [Header("Fall Values")]
     [SerializeField] private float m_fallDelay = 0.0f;
@@ -135,9 +136,9 @@ public class Movement : MonoBehaviour
         ResetJumpStats();
     }
 
-    float m_currentJumpHeight = 0f;
     private void JumpUpdate()
     {
+        // Has player landed?
         if (m_jumpTimer > 0.5f)
         {
             if (Landed())
@@ -146,8 +147,8 @@ public class Movement : MonoBehaviour
             }
         }
 
+        // Detect when to move to falling state
         m_jumpTimer += Time.deltaTime;
-
         if(m_jumpTimer > m_maxJumpTimer)
         {
             m_fallDelay += Time.deltaTime;
@@ -158,13 +159,13 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        //m_currentJumpHeight = (m_currentJumpHeight < m_maxJumpHeight) ? m_currentJumpHeight + (Time.deltaTime * m_jumpHeightIncreaseSpeed) : m_maxJumpHeight;
-        //m_moveInput.y += m_jumpHeightIncreaseSpeed * Time.deltaTime;
+        // Jumping logic
         m_moveInput.y = 1;
-        m_currentJumpHeight += Time.deltaTime * m_jumpHeightIncreaseSpeed;
+        m_currentJumpHeight = Time.deltaTime * m_jumpHeightIncreaseSpeed;
+        m_jumpHeight = m_jumpHeightIncreaseSpeed;
+        //m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightIncreaseSpeed;
 
-        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightIncreaseSpeed;
-
+        // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
     }
 
@@ -175,13 +176,13 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        //m_currentJumpHeight = (m_currentJumpHeight > 0) ? m_currentJumpHeight - (Time.deltaTime * m_jumpHeightDecreaseSpeed) : 0;
-        //m_moveInput.y -= m_jumpHeightDecreaseSpeed * Time.deltaTime;
+        // Falling logic
         m_moveInput.y = -1;
-        m_currentJumpHeight -= Time.deltaTime * m_jumpHeightIncreaseSpeed;
+        m_currentJumpHeight = Time.deltaTime * m_jumpHeightDecreaseSpeed;
+        m_jumpHeight = m_jumpHeightDecreaseSpeed;
+        //m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightDecreaseSpeed;
 
-        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeightDecreaseSpeed;
-
+        // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
     }
 
@@ -225,14 +226,26 @@ public class Movement : MonoBehaviour
             m_currentSpeed += Time.deltaTime * m_increaseSpeed;
         }
 
+        ControllerUpdate();
+    }
+
+    private void ControllerUpdate()
+    {
         // Check if changed direction and decrease acceleration if so
-        if((int)m_moveInput.x != m_previousDirection)
+        if ((int)m_moveInput.x != m_previousDirection)
         {
             m_currentSpeed = Mathf.Max(0, m_currentSpeed / 2);
         }
 
         m_previousDirection = (int)m_moveInput.x;
+
+        // Control horizontal movement
         m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
+
+        // Control vertical movement
+        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeight;
+
+        // Moving the player
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
     }
@@ -278,11 +291,13 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        ResetJumpStats();
         SetState(CharacterStates.Jump);
     }
 
     private void ResetJumpStats()
     {
+        m_currentJumpHeight = 0.0f;
         m_yMovement = 0.0f;
         m_moveInput.y = 0.0f;
         m_jumpTimer = 0.0f;
