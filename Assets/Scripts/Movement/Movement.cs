@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
         Walk,
         Jump,
         Fall,
+        Land,
         Shoot
     }
     [SerializeField] private CharacterStates m_currentState;
@@ -25,6 +26,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private PlayerControls m_controls;
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
     private CharacterController m_controller;
+    private bool m_canMove = true;
 
     [Header("Movement Values")]
     [SerializeField] private float m_groundedSpeed = 5.0f;
@@ -43,17 +45,21 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
     [SerializeField] private float m_jumpHeightDecreaseSpeed = 10.0f;
     private float m_jumpTimer = 0.0f;
-    private float m_currentJumpHeight = 0f;
 
     [Header("Raycasts")]
     [SerializeField] private Transform m_leftPosition;
     [SerializeField] private Transform m_middlePosition;
     [SerializeField] private Transform m_rightPosition;
+    [SerializeField] private LayerMask m_groundLayer;
     private const float GroundRayLength = 0.6f;
 
     [Header("Fall Values")]
     [SerializeField] private float m_fallDelay = 0.0f;
     [SerializeField] private float m_maxFallDelay = 0.1f;
+
+    [Header("Land Values")]
+    [SerializeField] private float m_landTimer = 0.0f;
+    [SerializeField] private float m_maxLandTime = 0.5f;
 
     [Header("Hidden Values")]
     private Vector2 m_moveInput = Vector2.zero;
@@ -67,6 +73,7 @@ public class Movement : MonoBehaviour
     {
         m_controls = new PlayerControls();
         m_controller = GetComponent<CharacterController>();
+        m_canMove = true;
         SetState(CharacterStates.Idle);
     }
 
@@ -106,6 +113,10 @@ public class Movement : MonoBehaviour
             case CharacterStates.Fall:
                 FallUpdate();
                 break;
+
+            case CharacterStates.Land:
+                LandUpdate();
+                break;
         }
     }
 
@@ -114,8 +125,11 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
+            m_canMove = true;
             m_previousState = m_currentState;
         }
+
+        m_currentSpeed = (m_currentSpeed > 0) ? m_currentSpeed - Time.deltaTime : 0f;
 
         if (m_moveInput.x != 0 && IsGrounded())
         {
@@ -182,20 +196,24 @@ public class Movement : MonoBehaviour
 
         // Jumping logic
         m_moveInput.y = 1;
-        m_currentJumpHeight = Time.deltaTime * m_jumpHeightIncreaseSpeed;
         m_jumpHeight = m_jumpHeightIncreaseSpeed;
 
         // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
     }
 
+    [SerializeField] private float m_fallTimer = 0.0f;
+    [SerializeField] private float m_maxFallTimer = 1.0f;
     private void FallUpdate()
     {
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Fall);
+            m_fallTimer = 0.0f;
             m_previousState = m_currentState;
         }
+
+        m_fallTimer += Time.deltaTime;
 
         if (Landed())
         {
@@ -204,26 +222,45 @@ public class Movement : MonoBehaviour
 
         // Falling logic
         m_moveInput.y = -1;
-        m_currentJumpHeight = Time.deltaTime * m_jumpHeightDecreaseSpeed;
         m_jumpHeight = m_jumpHeightDecreaseSpeed;
 
         // Setting horizontal movement when in the air
         m_movementSpeed = m_airSpeed;
     }
 
-    private bool Landed()
+    private void LandUpdate()
     {
-        if (m_moveInput.x == 0 && IsGrounded())
+        if (m_previousState != m_currentState)
+        {
+            Debug.Log("Previous state: " + m_previousState);
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Land);
+            m_landTimer = 0.0f;
+            m_previousState = m_currentState;
+        }
+
+        m_landTimer += Time.deltaTime;
+
+        if (m_landTimer > m_maxLandTime)
         {
             SetState(CharacterStates.Idle);
-            //m_yMovement = 0.0f;
+            return;
+        }
+
+        // Land logic
+        m_canMove = false;
+        m_currentSpeed = 0f;
+    }
+
+    private bool Landed()
+    {
+        if (IsGrounded() && m_fallTimer > m_maxFallTimer)
+        {
+            SetState(CharacterStates.Land);
             return true;
         }
         else if (IsGrounded())
         {
-            SetState(CharacterStates.Walk);
-            //m_yMovement = 0.0f;
-            return true;
+            SetState(CharacterStates.Idle);
         }
         return false;
     }
@@ -242,20 +279,26 @@ public class Movement : MonoBehaviour
         IsGrounded();
         StateUpdate();
 
-        if(m_moveInput.x == 0)
-        {
-            m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
-        }
-        else if(m_currentSpeed < m_maxSpeed)
-        {
-            m_currentSpeed += Time.deltaTime * m_increaseSpeed;
-        }
 
         ControllerUpdate();
     }
 
     private void ControllerUpdate()
     {
+        if (!m_canMove)
+        {
+            return;
+        }
+
+        if (m_moveInput.x == 0)
+        {
+            m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
+        }
+        else if (m_currentSpeed < m_maxSpeed)
+        {
+            m_currentSpeed += Time.deltaTime * m_increaseSpeed;
+        }
+
         // Check if changed direction and decrease acceleration if so
         if ((int)m_moveInput.x != m_previousDirection)
         {
@@ -281,17 +324,17 @@ public class Movement : MonoBehaviour
         Debug.DrawRay(m_middlePosition.position, Vector2.down * GroundRayLength, Color.red);
         Debug.DrawRay(m_rightPosition.position, Vector2.down * GroundRayLength, Color.red);
 
-        if (Physics.Raycast(m_leftPosition.position, Vector3.down, GroundRayLength))
+        if (Physics.Raycast(m_leftPosition.position, Vector3.down, GroundRayLength, m_groundLayer))
         {
             return true;
         }
 
-        if (Physics.Raycast(m_middlePosition.position, Vector3.down, GroundRayLength))
+        if (Physics.Raycast(m_middlePosition.position, Vector3.down, GroundRayLength, m_groundLayer))
         {
             return true;
         }
 
-        if (Physics.Raycast(m_rightPosition.position, Vector3.down, GroundRayLength))
+        if (Physics.Raycast(m_rightPosition.position, Vector3.down, GroundRayLength, m_groundLayer))
         {
             return true;
         }
@@ -322,7 +365,6 @@ public class Movement : MonoBehaviour
 
     private void ResetJumpStats()
     {
-        m_currentJumpHeight = 0.0f;
         m_yMovement = 0.0f;
         m_moveInput.y = 0.0f;
         m_jumpTimer = 0.0f;

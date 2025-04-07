@@ -29,6 +29,13 @@ public class SquashAndStretchController : MonoBehaviour
     [SerializeField] private AnimationCurve m_fallCurve;
     [SerializeField] private AnimationCurve m_landCurve;
 
+    [Header("Scales")]
+    [SerializeField] private Vector2 m_idleScale = new Vector2(1.0f, 1.0f);
+    [SerializeField] private Vector2 m_walkScale = new Vector2(1.0f, 1.0f);
+    [SerializeField] private Vector2 m_jumpScale = new Vector2(0.75f, 0.75f);
+    [SerializeField] private Vector2 m_fallScale = new Vector2(0.5f, 1.0f);
+    [SerializeField] private Vector2 m_landScale = new Vector2(0.25f, 0.25f);
+
     private void Start()
     {
         m_initScale = transform.localScale;
@@ -47,23 +54,23 @@ public class SquashAndStretchController : MonoBehaviour
         switch (m_type)
         {
             case SquashAndStretchType.Idle:
-                Animate(new Vector2(1.0f, 1.0f), Duration, m_idleCurve);
+                Animate(m_idleScale, Duration, m_idleCurve);
                 break;
 
             case SquashAndStretchType.Walk:
-                Animate(new Vector2(1.0f, 1.0f), Duration, m_walkCurve);
+                Animate(m_walkScale, Duration, m_walkCurve);
                 break;
 
             case SquashAndStretchType.Jump:
-                Animate(new Vector2(0.75f,0.75f), Duration, m_jumpCurve);
+                Animate(m_jumpScale, Duration, m_jumpCurve);
                 break;
 
             case SquashAndStretchType.Fall:
-                Animate(new Vector2(0.5f, 1.0f), 0.5f, m_fallCurve);
+                Animate(m_fallScale, 0.5f, m_fallCurve);
                 break;
 
             case SquashAndStretchType.Land:
-                Animate(new Vector2(0.25f, 0.25f), Duration, m_landCurve);
+                Animate(m_landScale, Duration, m_landCurve);
                 break;
         }
     }
