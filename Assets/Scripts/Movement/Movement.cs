@@ -371,4 +371,20 @@ public class Movement : MonoBehaviour
         m_fallDelay = 0.0f;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<OneWayPlatform>(out var platform))
+        {
+            if(other == platform.colB)
+            {
+                Debug.Log("Ass");
+                Collider playerCol = GetComponent<Collider>();
+                if (playerCol != null)
+                {
+                    StartCoroutine(platform.TemporarilyIgnoreCollision(playerCol));
+                }
+            }
+        }
+    }
+
 }
