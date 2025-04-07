@@ -61,6 +61,8 @@ public class Movement : MonoBehaviour
     private float m_yMovement = 0.0f;
     private Vector3 m_playerPos = Vector3.zero;
 
+    public Vector2 MoveInput => m_moveInput;
+
     private void Awake()
     {
         m_controls = new PlayerControls();
