@@ -20,12 +20,12 @@ public class Movement : MonoBehaviour
     {
         m_previousState = m_currentState;
         m_currentState = state;
+        Debug.Log($"Previous: {m_previousState}, current: {m_currentState}");
     }
 
     [Header("Main Components")]
     [SerializeField] private PlayerControls m_controls;
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
-    private CharacterController m_controller;
     private bool m_canMove = true;
 
     [Header("Movement Values")]
@@ -72,7 +72,6 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         m_controls = new PlayerControls();
-        m_controller = GetComponent<CharacterController>();
         m_canMove = true;
         SetState(CharacterStates.Idle);
     }
@@ -315,7 +314,8 @@ public class Movement : MonoBehaviour
 
         // Moving the player
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
-        m_controller.Move(m_playerPos);
+        //m_controller.Move(m_playerPos);
+        transform.Translate(m_playerPos);
     }
 
     private bool IsGrounded()
@@ -324,22 +324,27 @@ public class Movement : MonoBehaviour
         Debug.DrawRay(m_middlePosition.position, Vector2.down * GroundRayLength, Color.red);
         Debug.DrawRay(m_rightPosition.position, Vector2.down * GroundRayLength, Color.red);
 
-        if (Physics.Raycast(m_leftPosition.position, Vector3.down, GroundRayLength, m_groundLayer))
+        bool hit = false;
+
+        RaycastHit2D leftPos = Physics2D.Raycast(transform.position, Vector2.down, GroundRayLength, m_groundLayer);
+        if (leftPos)
         {
-            return true;
+            hit = true;
         }
 
-        if (Physics.Raycast(m_middlePosition.position, Vector3.down, GroundRayLength, m_groundLayer))
+        RaycastHit2D middlePos = Physics2D.Raycast(m_middlePosition.position, Vector2.down, GroundRayLength, m_groundLayer);
+        if (middlePos)
         {
-            return true;
+            hit = true;
         }
 
-        if (Physics.Raycast(m_rightPosition.position, Vector3.down, GroundRayLength, m_groundLayer))
+        RaycastHit2D rightPos = Physics2D.Raycast(m_rightPosition.position, Vector2.down, GroundRayLength, m_groundLayer);
+        if (rightPos)
         {
-            return true;
+            hit = true;
         }
 
-        return false;
+        return hit;
     }
 
     private void PressedJump()
@@ -369,21 +374,6 @@ public class Movement : MonoBehaviour
         m_moveInput.y = 0.0f;
         m_jumpTimer = 0.0f;
         m_fallDelay = 0.0f;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent<OneWayPlatform>(out var platform))
-        {
-            if(other == platform.colB)
-            {
-                Collider playerCol = GetComponent<Collider>();
-                if (playerCol != null)
-                {
-                    StartCoroutine(platform.TemporarilyIgnoreCollision(playerCol));
-                }
-            }
-        }
     }
 
 }
