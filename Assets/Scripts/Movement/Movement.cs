@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
@@ -21,7 +22,6 @@ public class Movement : MonoBehaviour
     {
         m_previousState = m_currentState;
         m_currentState = state;
-        Debug.Log($"Previous: {m_previousState}, current: {m_currentState}");
     }
 
     [Header("Main Components")]
@@ -195,6 +195,8 @@ public class Movement : MonoBehaviour
             }
         }
 
+        HitRoof();
+
         // Detect when to move to falling state
         m_jumpTimer += Time.deltaTime;
         if(m_jumpTimer > m_maxJumpTimer)
@@ -311,7 +313,11 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Application.targetFrameRate = 30;
+        }
+        else if (Input.GetKeyDown(KeyCode.O))
         {
             Application.targetFrameRate = 60;
         }
@@ -388,6 +394,60 @@ public class Movement : MonoBehaviour
         }   
 
         return hit;
+    }
+
+    private bool HitRoof()
+    {
+        Debug.DrawRay(m_middlePosition.position, Vector2.up * GroundRayLength, Color.red);
+
+        bool hit = false;
+        RaycastHit raycastHit;
+        if (Physics.Raycast(m_middlePosition.position, Vector3.up, out raycastHit, GroundRayLength, m_groundLayer))
+        {
+            hit = true;
+
+            // Get this object's collider
+            Collider thisCollider = GetComponent<Collider>();
+
+            // Get the collider that was hit
+            Collider hitCollider = raycastHit.collider;
+
+            // Make them ignore each other
+            if (thisCollider != null && hitCollider != null)
+            {
+                Physics.IgnoreCollision(thisCollider, hitCollider);
+
+                // Start coroutine to re-enable collisions safely
+                StartCoroutine(ReenableCollisionAfterSeparation(thisCollider, hitCollider));
+            }
+        }
+        else
+        {
+            hit = false;
+        }
+
+
+        return hit;
+    }
+
+    private IEnumerator ReenableCollisionAfterSeparation(Collider a, Collider b)
+    {
+        // Wait a minimum delay based on frame time (helps with lower framerates)
+        float timer = 0f;
+        while (timer < 0.1f)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Wait until colliders have stopped interacting
+        while (a.bounds.Intersects(b.bounds))
+        {
+            yield return null;
+        }
+
+        // Re-enable collision
+        Physics.IgnoreCollision(a, b, false);
     }
 
     private bool m_hasDoubleJumped = false;
