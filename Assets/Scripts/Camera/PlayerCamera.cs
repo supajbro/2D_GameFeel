@@ -7,7 +7,10 @@ public class PlayerCamera : MonoBehaviour
 
     [SerializeField] private Movement m_player;
     [SerializeField] private Vector2 m_screenThreshold = new Vector2(0.75f, 0.75f);
-    [SerializeField] private float m_speed = 5.0f;
+
+    [Header("Speed Values")]
+    [SerializeField] private float m_xSpeed = 5.0f;
+    [SerializeField] private float m_ySpeed = 2.5f;
 
     private Vector3 m_pos = Vector3.zero;
     private float m_zPos = -10f;
@@ -59,16 +62,35 @@ public class PlayerCamera : MonoBehaviour
             camMove.y = viewPos.y - (1f - m_screenThreshold.y);
         }
 
+        // Move directly to player pos
         if (m_player.MoveInput == Vector2.zero)
         {
             m_pos = new Vector3(m_player.transform.position.x, m_player.transform.position.y, m_zPos);
-            transform.position = Vector3.MoveTowards(transform.position, m_pos, m_speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, m_pos, m_xSpeed * Time.deltaTime);
         }
+        // Lerp smoothly to player
         else if (camMove != Vector3.zero)
         {
             Vector3 worldMove = m_cam.ViewportToWorldPoint(camMove) - m_cam.ViewportToWorldPoint(Vector3.zero);
-            m_pos = transform.position + new Vector3(worldMove.x, worldMove.y, 0f);
-            transform.position = Vector3.Lerp(transform.position, m_pos, m_speed * Time.deltaTime);
+            Vector3 targetPos = transform.position + new Vector3(worldMove.x, worldMove.y, 0f);
+
+            // Use separate speeds for x and y
+            float xSpeed = m_xSpeed;
+            float ySpeed = m_ySpeed;
+
+            Vector3 lerpedPos = new Vector3(
+                Mathf.Lerp(transform.position.x, targetPos.x, xSpeed * Time.deltaTime),
+                Mathf.Lerp(transform.position.y, m_player.transform.position.y, ySpeed * Time.deltaTime),
+                transform.position.z
+            );
+
+            transform.position = lerpedPos;
+
+            //float x = Mathf.Lerp(transform.position.x, m_pos.x, m_speed * Time.deltaTime);
+            //float y = m_pos.y;
+
+            //transform.position = Vector3.Lerp(transform.position, new Vector3(x, y, m_zPos), m_speed * Time.deltaTime);
+            //transform.position = new Vector3(x, y, m_zPos);
         }
     }
 
