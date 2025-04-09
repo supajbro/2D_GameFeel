@@ -377,7 +377,6 @@ public class Movement : MonoBehaviour
         {
             if(other == platform.colB)
             {
-                Debug.Log("Ass");
                 Collider playerCol = GetComponent<Collider>();
                 if (playerCol != null)
                 {
