@@ -10,6 +10,7 @@ public class SquashAndStretchController : MonoBehaviour
         Idle = 0,
         Walk,
         Jump,
+        DoubleJump,
         Fall,
         Land
     }
@@ -33,6 +34,7 @@ public class SquashAndStretchController : MonoBehaviour
     [SerializeField] private Vector2 m_idleScale = new Vector2(1.0f, 1.0f);
     [SerializeField] private Vector2 m_walkScale = new Vector2(1.0f, 1.0f);
     [SerializeField] private Vector2 m_jumpScale = new Vector2(0.75f, 0.75f);
+    [SerializeField] private Vector2 m_doubleJumpScale = new Vector2(0.5f, 0.5f);
     [SerializeField] private Vector2 m_fallScale = new Vector2(0.5f, 1.0f);
     [SerializeField] private Vector2 m_landScale = new Vector2(0.25f, 0.25f);
 
@@ -65,8 +67,12 @@ public class SquashAndStretchController : MonoBehaviour
                 Animate(m_jumpScale, Duration, m_jumpCurve);
                 break;
 
+            case SquashAndStretchType.DoubleJump:
+                Animate(m_doubleJumpScale, Duration, m_fallCurve);
+                break;
+
             case SquashAndStretchType.Fall:
-                Animate(m_fallScale, 0.5f, m_fallCurve);
+                Animate(m_fallScale, Duration, m_fallCurve);
                 break;
 
             case SquashAndStretchType.Land:
