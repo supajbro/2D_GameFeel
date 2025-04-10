@@ -79,6 +79,10 @@ public class Movement : MonoBehaviour
     private float m_yMovement = 0.0f;
     private Vector3 m_playerPos = Vector3.zero;
 
+    [Header("Visuals")]
+    [SerializeField] private TrailRenderer m_fallTrail;
+    [SerializeField] private float m_timeToStartTrail = 0.25f;
+
     public Vector2 MoveInput => m_moveInput;
 
     private void Awake()
@@ -264,6 +268,11 @@ public class Movement : MonoBehaviour
 
         m_fallTimer += Time.deltaTime;
 
+        if(m_fallTimer > m_timeToStartTrail)
+        {
+            m_fallTrail.time = 0.1f;
+        }
+
         if (Landed())
         {
             return;
@@ -340,6 +349,10 @@ public class Movement : MonoBehaviour
             m_koyoteTime = 0.0f;
         }
 
+        if(m_currentState != CharacterStates.Fall && m_fallTrail.time > 0f)
+        {
+            m_fallTrail.time -= Time.deltaTime * .5f;
+        }
 
         ControllerUpdate();
     }
@@ -377,9 +390,7 @@ public class Movement : MonoBehaviour
         // Moving the player
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
-        //transform.Translate(m_playerPos);
     }
-
 
     private bool IsGrounded()
     {
