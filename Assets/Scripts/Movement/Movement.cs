@@ -46,12 +46,15 @@ public class Movement : MonoBehaviour
     [SerializeField] private float m_maxJumpTimer = 1.0f;
     [SerializeField] private float m_jumpHeightIncreaseSpeed = 5.0f;
     [SerializeField] private float m_jumpHeightDecreaseSpeed = 10.0f;
+    [SerializeField] private float m_koyoteTime = 0.0f;
+    [SerializeField] private float m_maxKoyoteTime = 0.5f;
     private float m_jumpTimer = 0.0f;
 
     [Header("Double Jump Values")]
     [SerializeField] private float m_doubleJumpTimer = 0.0f;
     [SerializeField] private float m_maxDoubleJumpTimer = 0.0f;
     [SerializeField] private float m_doubleJumpHeightIncreaseSpeed = 10.0f;
+    private bool m_hasDoubleJumped = false;
 
     [Header("Fall Values")]
     [SerializeField] private float m_fallDelay = 0.0f;
@@ -329,6 +332,15 @@ public class Movement : MonoBehaviour
         IsGrounded();
         StateUpdate();
 
+        if (!IsGrounded())
+        {
+            m_koyoteTime += Time.deltaTime;
+        }
+        else
+        {
+            m_koyoteTime = 0.0f;
+        }
+
 
         ControllerUpdate();
     }
@@ -450,10 +462,14 @@ public class Movement : MonoBehaviour
         Physics.IgnoreCollision(a, b, false);
     }
 
-    private bool m_hasDoubleJumped = false;
     private void PressedJump()
     {
-        if (!IsGrounded() && !m_hasDoubleJumped)
+        if (!IsGrounded() && m_koyoteTime < m_maxKoyoteTime)
+        {
+            SetState(CharacterStates.Jump);
+            return;
+        }
+        else if (!IsGrounded() && !m_hasDoubleJumped)
         {
             SetState(CharacterStates.DoubleJump);
             return;
@@ -462,6 +478,9 @@ public class Movement : MonoBehaviour
         {
             return;
         }
+
+        // Reset the koyote time
+        m_koyoteTime = 0.0f;
 
         if(m_currentState != CharacterStates.Walk && m_currentState != CharacterStates.Idle)
         {
