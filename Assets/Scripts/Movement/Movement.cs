@@ -281,7 +281,6 @@ public class Movement : MonoBehaviour
     {
         if (m_previousState != m_currentState)
         {
-            Debug.Log("Previous state: " + m_previousState);
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Land);
             m_landTimer = 0.0f;
             m_previousState = m_currentState;
