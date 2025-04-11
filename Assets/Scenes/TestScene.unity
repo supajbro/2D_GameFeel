@@ -1264,7 +1264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_player: {fileID: 282978769}
-  m_screenThreshold: {x: 0.5, y: 0}
+  m_screenThreshold: {x: 0.55, y: 0}
   m_xSpeed: 5
   m_ySpeed: 2.5
 --- !u!4 &528085981 stripped
