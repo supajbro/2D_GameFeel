@@ -20,7 +20,6 @@ public class SquashAndStretchController : MonoBehaviour
     private float m_elapsedTime = 0.0f;
     private const float Duration = 0.15f;
 
-    private Vector2 m_initScale = Vector2.one;
     private Vector2 m_currentScale = Vector2.one;
 
     [Header("Curves")]
@@ -37,11 +36,6 @@ public class SquashAndStretchController : MonoBehaviour
     [SerializeField] private Vector2 m_doubleJumpScale = new Vector2(0.5f, 0.5f);
     [SerializeField] private Vector2 m_fallScale = new Vector2(0.5f, 1.0f);
     [SerializeField] private Vector2 m_landScale = new Vector2(0.25f, 0.25f);
-
-    private void Start()
-    {
-        m_initScale = transform.localScale;
-    }
 
     public void SetSquashType(SquashAndStretchType type)
     {

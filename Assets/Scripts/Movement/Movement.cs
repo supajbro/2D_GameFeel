@@ -27,6 +27,7 @@ public class Movement : MonoBehaviour
     [Header("Main Components")]
     [SerializeField] private PlayerControls m_controls;
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
+    [SerializeField] private CameraZoomController m_camZoom;
     private CharacterController m_controller;
     private bool m_canMove = true;
 
@@ -145,6 +146,7 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
+            m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Idle);
             m_canMove = true;
             m_previousState = m_currentState;
         }
@@ -168,6 +170,7 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Walk);
+            m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Walk);
             m_previousState = m_currentState;
         }
 
@@ -190,6 +193,7 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Jump);
+            m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Jump);
             m_previousState = m_currentState;
         }
 
@@ -229,6 +233,7 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.DoubleJump);
+            m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.DoubleJump);
             m_hasDoubleJumped = true;
             m_doubleJumpTimer = 0f;
             m_fallTimer = 0f;

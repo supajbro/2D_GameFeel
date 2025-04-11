@@ -512,6 +512,7 @@ MonoBehaviour:
   m_currentState: 0
   m_previousState: 0
   m_squashAndStretch: {fileID: 1703083531}
+  m_camZoom: {fileID: 519420034}
   m_groundedSpeed: 7.5
   m_airSpeed: 5
   m_currentSpeed: 0
@@ -533,7 +534,7 @@ MonoBehaviour:
   m_fallTimer: 0
   m_maxFallTimer: 0.35
   m_landTimer: 0
-  m_maxLandTime: 0.15
+  m_maxLandTime: 0.1
   m_leftPosition: {fileID: 748235278}
   m_middlePosition: {fileID: 259128129}
   m_rightPosition: {fileID: 1272735055}
@@ -1272,6 +1273,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1381,6 +1383,46 @@ MonoBehaviour:
   m_screenThreshold: {x: 0.55, y: 0}
   m_xSpeed: 5
   m_ySpeed: 2.5
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3418dc1de796a74478805c486bd1db0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_idleZoom: {x: 5, y: 2}
+  m_walkZoom: {x: 7, y: 0.5}
+  m_jumpZoom: {x: 8, y: 1}
+  m_doubleJjumpZoom: {x: 9, y: 0.5}
 --- !u!4 &528085981 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6689308298893043505, guid: c93348263f38ebd47ba55beb481b5e0f, type: 3}
