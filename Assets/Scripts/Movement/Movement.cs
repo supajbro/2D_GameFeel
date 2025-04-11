@@ -83,6 +83,7 @@ public class Movement : MonoBehaviour
 
     [Header("Visuals")]
     [SerializeField] private TrailRenderer m_fallTrail;
+    [SerializeField] private TrailRenderer m_changeDirectionTrail;
     [SerializeField] private float m_timeToStartTrail = 0.25f;
 
     public Vector2 MoveInput => m_moveInput;
@@ -380,10 +381,16 @@ public class Movement : MonoBehaviour
             m_currentSpeed += Time.deltaTime * m_increaseSpeed;
         }
 
+        if(m_changeDirectionTrail.time > 0f)
+        {
+            m_changeDirectionTrail.time -= Time.deltaTime;
+        }
+
         // Check if changed direction and decrease acceleration if so
         if ((int)m_moveInput.x != m_previousDirection)
         {
             m_currentSpeed = Mathf.Max(0, m_currentSpeed / 2);
+            m_changeDirectionTrail.time = (IsGrounded()) ? 0.5f : m_changeDirectionTrail.time;
         }
 
         m_previousDirection = (int)m_moveInput.x;
