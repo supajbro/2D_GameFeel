@@ -7,6 +7,7 @@ public class PlayerCamera : MonoBehaviour
 
     [SerializeField] private Movement m_player;
     [SerializeField] private Vector2 m_screenThreshold = new Vector2(0.75f, 0.75f);
+    private CameraShakeController m_camShake;
 
     [Header("Speed Values")]
     [SerializeField] private float m_xSpeed = 5.0f;
@@ -20,6 +21,7 @@ public class PlayerCamera : MonoBehaviour
     private void Start()
     {
         m_cam = GetComponent<Camera>();
+        m_camShake = GetComponent<CameraShakeController>();
     }
 
     private void LateUpdate()

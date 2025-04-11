@@ -28,6 +28,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private PlayerControls m_controls;
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
     [SerializeField] private CameraZoomController m_camZoom;
+    [SerializeField] private CameraShakeController m_camShake;
     private CharacterController m_controller;
     private bool m_canMove = true;
 
@@ -296,6 +297,7 @@ public class Movement : MonoBehaviour
         if (m_previousState != m_currentState)
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Land);
+            m_camShake.StartShake(CameraShakeController.CameraShakeType.ShiftDownAtTarget, transform.position);
             m_landTimer = 0.0f;
             m_previousState = m_currentState;
         }
