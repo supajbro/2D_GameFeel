@@ -30,6 +30,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private CameraZoomController m_camZoom;
     [SerializeField] private CameraShakeController m_camShake;
     private CharacterController m_controller;
+    private PlayerWeapon m_weapon;
     private bool m_canMove = true;
 
     [Header("Movement Values")]
@@ -93,6 +94,7 @@ public class Movement : MonoBehaviour
         m_controls = new PlayerControls();
         m_canMove = true;
         m_controller = GetComponent<CharacterController>();
+        m_weapon = GetComponent<PlayerWeapon>();
         SetState(CharacterStates.Idle);
     }
 
@@ -106,6 +108,8 @@ public class Movement : MonoBehaviour
 
         // Jumping
         m_controls.Player.Jump.performed += ctx => PressedJump();
+
+        m_controls.Player.Shoot.performed += ctx => m_weapon.Shoot();
     }
 
     private void OnDisable()
