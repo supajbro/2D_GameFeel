@@ -24,6 +24,7 @@ public class CameraZoomController : MonoBehaviour
     private float m_elapsedTime = 0.0f;
     private float m_initSize = 0f;
 
+    [Header("Scale & Duration")]
     [SerializeField] private Vector2 m_idleZoom = new Vector2(6.0f, 1.0f);
     [SerializeField] private Vector2 m_walkZoom = new Vector2(7.0f, 1.0f);
     [SerializeField] private Vector2 m_jumpZoom = new Vector2(8.0f, 1.0f);
