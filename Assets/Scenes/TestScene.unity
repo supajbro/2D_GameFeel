@@ -603,7 +603,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_shootPos: {fileID: 1341785019}
   m_currentAmmo: 0
-  m_maxAmmo: 30
+  m_maxAmmo: 15
+  m_fireRate: 0
+  m_maxFireRate: 0.1
   m_reloading: 0
   m_reloadTime: 0
   m_maxReloadTime: 1
@@ -3315,12 +3317,37 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_shootCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   m_idleScale: {x: 1, y: 1}
   m_walkScale: {x: 0.9, y: 1}
   m_jumpScale: {x: 1.25, y: 0.25}
   m_doubleJumpScale: {x: 3, y: 1.5}
   m_fallScale: {x: 0.5, y: 2}
   m_landScale: {x: 2, y: 0.25}
+  m_shootScale: {x: 0.5, y: 0.5}
 --- !u!4 &1703083532
 Transform:
   m_ObjectHideFlags: 0

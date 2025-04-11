@@ -10,6 +10,8 @@ public class Bullet : MonoBehaviour
     [Header("Values")]
     [SerializeField] private bool m_isActive = false;
     [SerializeField] private float m_speed = 10.0f;
+
+    [Header("Lifespan")]
     [SerializeField] private float m_lifeSpan = 0.0f;
     [SerializeField] private float m_maxLifeSpan = 1.0f;
 

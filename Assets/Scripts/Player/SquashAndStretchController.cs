@@ -12,7 +12,8 @@ public class SquashAndStretchController : MonoBehaviour
         Jump,
         DoubleJump,
         Fall,
-        Land
+        Land,
+        Shoot
     }
 
     private SquashAndStretchType m_type;
@@ -28,6 +29,7 @@ public class SquashAndStretchController : MonoBehaviour
     [SerializeField] private AnimationCurve m_jumpCurve;
     [SerializeField] private AnimationCurve m_fallCurve;
     [SerializeField] private AnimationCurve m_landCurve;
+    [SerializeField] private AnimationCurve m_shootCurve;
 
     [Header("Scales")]
     [SerializeField] private Vector2 m_idleScale = new Vector2(1.0f, 1.0f);
@@ -36,6 +38,7 @@ public class SquashAndStretchController : MonoBehaviour
     [SerializeField] private Vector2 m_doubleJumpScale = new Vector2(0.5f, 0.5f);
     [SerializeField] private Vector2 m_fallScale = new Vector2(0.5f, 1.0f);
     [SerializeField] private Vector2 m_landScale = new Vector2(0.25f, 0.25f);
+    [SerializeField] private Vector2 m_shootScale = new Vector2(0.5f, 0.5f);
 
     public void SetSquashType(SquashAndStretchType type)
     {
@@ -71,6 +74,10 @@ public class SquashAndStretchController : MonoBehaviour
 
             case SquashAndStretchType.Land:
                 Animate(m_landScale, Duration, m_landCurve);
+                break;
+
+            case SquashAndStretchType.Shoot:
+                Animate(m_shootScale, Duration, m_shootCurve);
                 break;
         }
     }

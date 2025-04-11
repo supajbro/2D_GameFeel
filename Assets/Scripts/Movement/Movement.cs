@@ -18,7 +18,7 @@ public class Movement : MonoBehaviour
     }
     [SerializeField] private CharacterStates m_currentState;
     [SerializeField] private CharacterStates m_previousState;
-    private void SetState(CharacterStates state)
+    public void SetState(CharacterStates state)
     {
         m_previousState = m_currentState;
         m_currentState = state;
@@ -109,7 +109,10 @@ public class Movement : MonoBehaviour
         // Jumping
         m_controls.Player.Jump.performed += ctx => PressedJump();
 
-        m_controls.Player.Shoot.performed += ctx => m_weapon.Shoot();
+        // Shooting
+        m_controls.Player.Shoot.performed += ctx => m_weapon.isShooting = true;
+        m_controls.Player.Shoot.canceled += ctx => m_weapon.isShooting = false;
+
     }
 
     private void OnDisable()
@@ -144,6 +147,10 @@ public class Movement : MonoBehaviour
             case CharacterStates.Land:
                 LandUpdate();
                 break;
+
+            case CharacterStates.Shoot:
+                ShootUpdate();
+                break;
         }
     }
 
@@ -159,7 +166,11 @@ public class Movement : MonoBehaviour
 
         m_currentSpeed = (m_currentSpeed > 0) ? m_currentSpeed - Time.deltaTime : 0f;
 
-        if (m_moveInput.x != 0 && IsGrounded())
+        if (m_weapon.isShooting)
+        {
+            SetState(CharacterStates.Shoot);
+        }
+        else if (m_moveInput.x != 0 && IsGrounded())
         {
             SetState(CharacterStates.Walk);
         }
@@ -180,7 +191,11 @@ public class Movement : MonoBehaviour
             m_previousState = m_currentState;
         }
 
-        if (m_moveInput.x == 0 && IsGrounded())
+        if (m_weapon.isShooting)
+        {
+            SetState(CharacterStates.Shoot);
+        }
+        else if (m_moveInput.x == 0 && IsGrounded())
         {
             SetState(CharacterStates.Idle);
         }
@@ -201,6 +216,12 @@ public class Movement : MonoBehaviour
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Jump);
             m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Jump);
             m_previousState = m_currentState;
+        }
+
+        if (m_weapon.isShooting)
+        {
+            SetState(CharacterStates.Shoot);
+            return;
         }
 
         // Has player landed?
@@ -244,6 +265,12 @@ public class Movement : MonoBehaviour
             m_doubleJumpTimer = 0f;
             m_fallTimer = 0f;
             m_previousState = m_currentState;
+        }
+
+        if (m_weapon.isShooting)
+        {
+            SetState(CharacterStates.Shoot);
+            return;
         }
 
         // Has player landed?
@@ -319,6 +346,53 @@ public class Movement : MonoBehaviour
         m_canMove = false;
         m_currentSpeed = 0f;
     }
+    private void ShootUpdate()
+    {
+        if (m_previousState != m_currentState)
+        {
+            m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Shoot);
+            m_previousState = m_currentState;
+        }
+
+        PlayerWeapon weapon = m_weapon;
+
+        if(weapon == null)
+        {
+            return;
+        }
+
+        if (!m_weapon.isShooting)
+        {
+            if (IsGrounded())
+            {
+                SetState(CharacterStates.Idle);
+            }
+            else
+            {
+                SetState(CharacterStates.Fall);
+            }
+        }
+
+        weapon.Shoot();
+
+        if(weapon.CurrentAmmo <= 0 && !IsGrounded())
+        {
+            Knockback(weapon);
+        }
+
+        if (!IsGrounded())
+        {
+            m_xMovement = 0f;
+        }
+
+        m_yMovement = 0f;
+    }
+
+    private void Knockback(PlayerWeapon weapon)
+    {
+        Vector3 dir = weapon.Direction;
+        m_controller.Move(-dir * Time.deltaTime * weapon.KnockbackPower);
+    }
 
     private bool Landed()
     {
@@ -349,7 +423,6 @@ public class Movement : MonoBehaviour
             Application.targetFrameRate = 250;
         }
 
-        IsGrounded();
         StateUpdate();
 
         if (!IsGrounded())
@@ -399,11 +472,17 @@ public class Movement : MonoBehaviour
 
         m_previousDirection = (int)m_moveInput.x;
 
-        // Control horizontal movement
-        m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
+        if (!m_weapon.isShooting || IsGrounded())
+        {
+            // Control horizontal movement
+            m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
+        }
 
-        // Control vertical movement
-        m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeight;
+        if (!m_weapon.isShooting)
+        {
+            // Control vertical movement
+            m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeight;
+        }
 
         // Moving the player
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
@@ -466,7 +545,6 @@ public class Movement : MonoBehaviour
             hit = false;
         }
 
-
         return hit;
     }
 
@@ -492,6 +570,11 @@ public class Movement : MonoBehaviour
 
     private void PressedJump()
     {
+        if (m_weapon.isShooting)
+        {
+            return;
+        }
+
         if (!IsGrounded() && m_koyoteTime < m_maxKoyoteTime)
         {
             SetState(CharacterStates.Jump);
