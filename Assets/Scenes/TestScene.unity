@@ -545,6 +545,7 @@ MonoBehaviour:
   m_fallTrail: {fileID: 1070454173}
   m_changeDirectionTrail: {fileID: 1392338521}
   m_timeToStartTrail: 0.2
+  m_playerUIPrefab: {fileID: -188902886172738824, guid: b1048934eb3564944a23753e6e8a35d6, type: 3}
 --- !u!4 &282978770
 Transform:
   m_ObjectHideFlags: 0
@@ -601,11 +602,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7f2495f0a39c67429cb901e1a4c23b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isShooting: 0
+  m_nonShootingTime: 0
+  m_maxNonShootingTime: 1
   m_shootPos: {fileID: 1341785019}
+  m_knockbackPower: 50
   m_currentAmmo: 0
   m_maxAmmo: 15
   m_fireRate: 0
-  m_maxFireRate: 0.1
+  m_maxFireRate: 0.05
   m_reloading: 0
   m_reloadTime: 0
   m_maxReloadTime: 1

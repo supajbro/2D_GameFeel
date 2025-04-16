@@ -82,20 +82,35 @@ public class Movement : MonoBehaviour
     private float m_yMovement = 0.0f;
     private Vector3 m_playerPos = Vector3.zero;
 
+    public Vector2 MoveInput => m_moveInput;
+
     [Header("Visuals")]
     [SerializeField] private TrailRenderer m_fallTrail;
     [SerializeField] private TrailRenderer m_changeDirectionTrail;
     [SerializeField] private float m_timeToStartTrail = 0.25f;
 
-    public Vector2 MoveInput => m_moveInput;
+    [Header("UI")]
+    [SerializeField] private PlayerUI m_playerUIPrefab;
+    private PlayerUI m_playerUI;
+    public PlayerUI PlayerUI => m_playerUI;
 
     private void Awake()
     {
+        // Initial state
+        SetState(CharacterStates.Idle);
+
+        // Movement
         m_controls = new PlayerControls();
         m_canMove = true;
         m_controller = GetComponent<CharacterController>();
+
+        // Weapon
         m_weapon = GetComponent<PlayerWeapon>();
-        SetState(CharacterStates.Idle);
+        m_weapon.Init();
+
+        // UI
+        m_playerUI = Instantiate(m_playerUIPrefab);
+        m_playerUI.SetAmmoText(m_weapon.CurrentAmmo);
     }
 
     private void OnEnable()

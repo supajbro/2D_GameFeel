@@ -34,7 +34,7 @@ public class PlayerWeapon : MonoBehaviour
     public Vector3 Direction => m_direction;
     public int CurrentAmmo => m_currentAmmo;
 
-    private void Start()
+    public void Init()
     {
         m_player = GetComponent<Movement>();
         m_currentAmmo = m_maxAmmo;
@@ -76,6 +76,8 @@ public class PlayerWeapon : MonoBehaviour
         m_direction = direction;
 
         BulletPooler.Instance.GrabBullet(m_shootPos, direction);
+
+        m_player.PlayerUI.SetAmmoText(m_currentAmmo);
     }
 
     private void Reload()
@@ -95,6 +97,8 @@ public class PlayerWeapon : MonoBehaviour
             m_reloadTime = 0.0f;
             m_currentAmmo = m_maxAmmo;
         }
+
+        m_player.PlayerUI.SetAmmoText(m_currentAmmo);
     }
 
     private void AutoReload()
