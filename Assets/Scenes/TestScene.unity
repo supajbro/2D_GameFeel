@@ -608,12 +608,12 @@ MonoBehaviour:
   m_shootPos: {fileID: 1341785019}
   m_knockbackPower: 50
   m_currentAmmo: 0
-  m_maxAmmo: 15
+  m_maxAmmo: 30
   m_fireRate: 0
   m_maxFireRate: 0.05
   m_reloading: 0
   m_reloadTime: 0
-  m_maxReloadTime: 1
+  m_maxReloadTime: 0.5
 --- !u!1 &298729868
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bulletPrefab: {fileID: 3923497237589726227, guid: 44d75ee372c67cc49a4f35a0205586f4, type: 3}
-  m_bulletPoolAmount: 10
+  m_bulletPoolAmount: 30
   m_bullets: []
 --- !u!4 &452739290
 Transform:
