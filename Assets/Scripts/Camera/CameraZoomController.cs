@@ -17,6 +17,7 @@ public class CameraZoomController : MonoBehaviour
     }
     private CameraZoomState m_state;
     private Camera m_cam;
+    private PlayerCamera m_playerCam;
 
     private bool m_zoom = false;
 
@@ -33,6 +34,7 @@ public class CameraZoomController : MonoBehaviour
     private void Start()
     {
         m_cam = GetComponent<Camera>();
+        m_playerCam = GetComponent<PlayerCamera>();
     }
 
     public void SetZoonType(CameraZoomState state)
@@ -51,6 +53,11 @@ public class CameraZoomController : MonoBehaviour
         }
 
         if(m_cam == null)
+        {
+            return;
+        }
+
+        if (!m_playerCam.Player.CanMove)
         {
             return;
         }

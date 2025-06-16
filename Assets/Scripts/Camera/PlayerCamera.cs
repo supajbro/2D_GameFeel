@@ -6,6 +6,8 @@ public class PlayerCamera : MonoBehaviour
 {
 
     [SerializeField] private Player m_player;
+    public Player Player => m_player;
+
     [SerializeField] private Vector2 m_screenThreshold = new Vector2(0.75f, 0.75f);
     private CameraShakeController m_camShake;
 
@@ -37,6 +39,11 @@ public class PlayerCamera : MonoBehaviour
         }
 
         if(m_cam == null)
+        {
+            return;
+        }
+
+        if (!m_player.CanMove)
         {
             return;
         }

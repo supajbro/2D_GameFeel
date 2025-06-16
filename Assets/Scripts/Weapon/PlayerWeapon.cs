@@ -61,6 +61,11 @@ public class PlayerWeapon : MonoBehaviour
             return;
         }
 
+        if (!m_player.CanMove)
+        {
+            return;
+        }
+
         if(m_currentAmmo <= 0)
         {
             m_reloading = true;

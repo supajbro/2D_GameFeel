@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IHealth
 {
-
+    #region - VARIABLES -
     [Serializable]
     public enum CharacterStates
     {
@@ -32,6 +32,7 @@ public class Player : MonoBehaviour, IHealth
     private CharacterController m_controller;
     private PlayerWeapon m_weapon;
     private bool m_canMove = true;
+    public bool CanMove => m_canMove;
 
     [Header("Movement Values")]
     [SerializeField] private float m_groundedSpeed = 5.0f;
@@ -93,6 +94,7 @@ public class Player : MonoBehaviour, IHealth
     [SerializeField] private PlayerUI m_playerUIPrefab;
     private PlayerUI m_playerUI;
     public PlayerUI PlayerUI => m_playerUI;
+    #endregion
 
     #region - HEALTH -
     [Header("Health")]
@@ -110,12 +112,12 @@ public class Player : MonoBehaviour, IHealth
         set => m_maxHealth = value;
     }
     public Action<float> OnDamage;
-    private void TakeDamage(float damage)
+    public void ChangeHealth(float health)
     {
-        m_currentHealth -= damage;
+        m_currentHealth -= health;
         m_currentHealth = Mathf.Max(0, m_currentHealth);
 
-        if(m_currentHealth <= 0)
+        if (m_currentHealth <= 0)
         {
             Die();
         }
@@ -124,9 +126,11 @@ public class Player : MonoBehaviour, IHealth
     private void Die()
     {
         m_canMove = false;
+        m_squashAndStretch.gameObject.SetActive(false);
     }
     #endregion
 
+    #region - INIT -
     private void Awake()
     {
         // Initial state
@@ -147,7 +151,7 @@ public class Player : MonoBehaviour, IHealth
 
         // Health
         m_currentHealth = m_maxHealth;
-        OnDamage += TakeDamage;
+        OnDamage += ChangeHealth;
     }
 
     private void OnEnable()
@@ -170,6 +174,7 @@ public class Player : MonoBehaviour, IHealth
     {
         m_controls.Disable();
     }
+    #endregion
 
     private void StateUpdate()
     {
@@ -665,10 +670,5 @@ public class Player : MonoBehaviour, IHealth
         m_jumpTimer = 0.0f;
         m_fallDelay = 0.0f;
         m_hasDoubleJumped = false;
-    }
-
-    public void ChangeHealth(float health)
-    {
-        throw new NotImplementedException();
     }
 }
