@@ -126,6 +126,7 @@ public class Movement : MonoBehaviour
 
         // Shooting
         m_controls.Player.Shoot.performed += ctx => m_weapon.isShooting = true;
+        m_controls.Player.Shoot.canceled += ctx => m_weapon.isShooting = false;
     }
 
     private void OnDisable()
@@ -388,7 +389,7 @@ public class Movement : MonoBehaviour
 
         weapon.Shoot();
 
-        if(weapon.CurrentAmmo <= 0 && !IsGrounded())
+        if(!IsGrounded())
         {
             Knockback(weapon);
         }

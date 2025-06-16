@@ -87,7 +87,10 @@ public class PlayerWeapon : MonoBehaviour
             return;
         }
 
-        isShooting = false;
+        if (isShooting)
+        {
+            return;
+        }
 
         m_reloadTime = (m_reloadTime < m_maxReloadTime) ? m_reloadTime + Time.deltaTime : m_maxReloadTime;
 
