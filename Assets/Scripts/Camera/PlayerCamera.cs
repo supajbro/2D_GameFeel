@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
 
-    [SerializeField] private Movement m_player;
+    [SerializeField] private Player m_player;
     [SerializeField] private Vector2 m_screenThreshold = new Vector2(0.75f, 0.75f);
     private CameraShakeController m_camShake;
 

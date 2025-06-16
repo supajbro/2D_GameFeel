@@ -26,6 +26,13 @@ public class Enemy : MonoBehaviour, IEnemy
         set => m_moveSpeed = value;
     }
 
+    [SerializeField] private float m_damage;
+    public float Damage
+    {
+        get => m_damage;
+        set => m_damage = value;
+    }
+
     [Header("Set Path")]
     [SerializeField] private bool m_moveRight = true;
     [SerializeField] private Transform m_rightPath;
@@ -37,13 +44,25 @@ public class Enemy : MonoBehaviour, IEnemy
         MoveUpdate();
     }
 
-    public void AttackUpdate()
+    private void OnTriggerEnter(Collider collision)
+    {
+        if(collision.gameObject.tag == Tags.PLAYER_TAG)
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                AttackUpdate(player);
+            }
+        }
+    }
+
+    public void AttackUpdate(Player player)
     {
         if (!m_canMove)
         {
             return;
         }
-
+        player.OnDamage.Invoke(Damage);
     }
 
     public void MoveUpdate()

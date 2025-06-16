@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Movement : MonoBehaviour
+public class Player : MonoBehaviour, IHealth
 {
 
     [Serializable]
@@ -94,6 +94,39 @@ public class Movement : MonoBehaviour
     private PlayerUI m_playerUI;
     public PlayerUI PlayerUI => m_playerUI;
 
+    #region - HEALTH -
+    [Header("Health")]
+    [SerializeField] private float m_currentHealth;
+    public float CurrentHealth
+    {
+        get => m_currentHealth;
+        set => m_currentHealth = value;
+    }
+
+    [SerializeField] private float m_maxHealth;
+    public float MaxHealth
+    {
+        get => m_maxHealth;
+        set => m_maxHealth = value;
+    }
+    public Action<float> OnDamage;
+    private void TakeDamage(float damage)
+    {
+        m_currentHealth -= damage;
+        m_currentHealth = Mathf.Max(0, m_currentHealth);
+
+        if(m_currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        m_canMove = false;
+    }
+    #endregion
+
     private void Awake()
     {
         // Initial state
@@ -111,6 +144,10 @@ public class Movement : MonoBehaviour
         // UI
         m_playerUI = Instantiate(m_playerUIPrefab);
         m_playerUI.SetAmmoText(m_weapon.CurrentAmmo);
+
+        // Health
+        m_currentHealth = m_maxHealth;
+        OnDamage += TakeDamage;
     }
 
     private void OnEnable()
@@ -174,7 +211,7 @@ public class Movement : MonoBehaviour
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
             m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Idle);
-            m_canMove = true;
+            //m_canMove = true;
             m_previousState = m_currentState;
         }
 
@@ -357,7 +394,7 @@ public class Movement : MonoBehaviour
         }
 
         // Land logic
-        m_canMove = false;
+        //m_canMove = false;
         m_currentSpeed = 0f;
     }
     private void ShootUpdate()
@@ -630,4 +667,8 @@ public class Movement : MonoBehaviour
         m_hasDoubleJumped = false;
     }
 
+    public void ChangeHealth(float health)
+    {
+        throw new NotImplementedException();
+    }
 }

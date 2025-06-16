@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerWeapon : MonoBehaviour
 {
 
-    private Movement m_player;
+    private Player m_player;
 
     [Header("Is Shooting")]
     public bool isShooting = false;
@@ -36,7 +36,7 @@ public class PlayerWeapon : MonoBehaviour
 
     public void Init()
     {
-        m_player = GetComponent<Movement>();
+        m_player = GetComponent<Player>();
         m_currentAmmo = m_maxAmmo;
     }
 
