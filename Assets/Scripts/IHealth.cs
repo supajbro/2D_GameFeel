@@ -8,4 +8,5 @@ public interface IHealth
     public float MaxHealth { get; set; }
 
     public void ChangeHealth(float health);
+    public void Die():
 }

@@ -123,7 +123,7 @@ public class Player : MonoBehaviour, IHealth
         }
     }
 
-    private void Die()
+    public void Die()
     {
         m_canMove = false;
         m_squashAndStretch.gameObject.SetActive(false);
