@@ -535,7 +535,7 @@ MonoBehaviour:
   m_fallTimer: 0
   m_maxFallTimer: 0.35
   m_landTimer: 0
-  m_maxLandTime: 0.1
+  m_maxLandTime: 0
   m_leftPosition: {fileID: 748235278}
   m_middlePosition: {fileID: 259128129}
   m_rightPosition: {fileID: 1272735055}
@@ -610,7 +610,7 @@ MonoBehaviour:
   m_currentAmmo: 0
   m_maxAmmo: 30
   m_fireRate: 0
-  m_maxFireRate: 0.025
+  m_maxFireRate: 0.1
   m_reloading: 0
   m_reloadTime: 0
   m_maxReloadTime: 0.25
