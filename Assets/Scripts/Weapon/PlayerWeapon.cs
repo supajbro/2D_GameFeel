@@ -64,6 +64,12 @@ public class PlayerWeapon : MonoBehaviour
         if(m_currentAmmo <= 0)
         {
             m_reloading = true;
+
+            if (isShooting)
+            {
+                isShooting = false;
+            }
+
             return;
         }
 
