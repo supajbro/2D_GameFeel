@@ -76,7 +76,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask m_groundLayer;
     private const float GroundRayLength = 0.6f;
 
-    [Header("Hidden Values")]
+    [Header("Runtime Values")]
     private Vector2 m_moveInput = Vector2.zero;
     private float m_xMovement = 0.0f;
     private float m_yMovement = 0.0f;
