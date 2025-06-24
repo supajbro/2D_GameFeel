@@ -27,6 +27,8 @@ public class Player : MonoBehaviour, IHealth
     [Header("Main Components")]
     [SerializeField] private PlayerControls m_controls;
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
+    [SerializeField] private SpriteRenderer m_playerModel;
+    [SerializeField] private Animator m_anim;
     [SerializeField] private CameraZoomController m_camZoom;
     [SerializeField] private CameraShakeController m_camShake;
     private CharacterController m_controller;
@@ -84,11 +86,6 @@ public class Player : MonoBehaviour, IHealth
     private Vector3 m_playerPos = Vector3.zero;
 
     public Vector2 MoveInput => m_moveInput;
-
-    [Header("Visuals")]
-    [SerializeField] private TrailRenderer m_fallTrail;
-    [SerializeField] private TrailRenderer m_changeDirectionTrail;
-    [SerializeField] private float m_timeToStartTrail = 0.25f;
 
     [Header("UI")]
     [SerializeField] private PlayerUI m_playerUIPrefab;
@@ -183,17 +180,16 @@ public class Player : MonoBehaviour, IHealth
         {
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Idle);
             m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Idle);
-            //m_canMove = true;
             m_previousState = m_currentState;
+
+            m_anim.SetBool("Running", false);
+            m_anim.SetBool("Jumping", false);
+            m_anim.SetBool("Falling", false);
         }
 
         m_currentSpeed = (m_currentSpeed > 0) ? m_currentSpeed - Time.deltaTime : 0f;
 
-        //if (m_weapon.isShooting && m_weapon.CurrentAmmo > 0)
-        //{
-        //    SetState(CharacterStates.Shoot);
-        //}
-        /*else */if (m_moveInput.x != 0 && IsGrounded())
+        if (m_moveInput.x != 0 && IsGrounded())
         {
             SetState(CharacterStates.Walk);
         }
@@ -212,13 +208,10 @@ public class Player : MonoBehaviour, IHealth
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Walk);
             m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Walk);
             m_previousState = m_currentState;
+            m_anim.SetBool("Running", true);
         }
 
-        //if (m_weapon.isShooting)
-        //{
-        //    SetState(CharacterStates.Shoot);
-        //}
-       /* else*/ if (m_moveInput.x == 0 && IsGrounded())
+        if (m_moveInput.x == 0 && IsGrounded())
         {
             SetState(CharacterStates.Idle);
         }
@@ -239,13 +232,8 @@ public class Player : MonoBehaviour, IHealth
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Jump);
             m_camZoom.SetZoonType(CameraZoomController.CameraZoomState.Jump);
             m_previousState = m_currentState;
+            m_anim.SetBool("Jumping", true);
         }
-
-        //if (m_weapon.isShooting)
-        //{
-        //    SetState(CharacterStates.Shoot);
-        //    return;
-        //}
 
         // Has player landed?
         if (m_jumpTimer > 0.5f)
@@ -290,12 +278,6 @@ public class Player : MonoBehaviour, IHealth
             m_previousState = m_currentState;
         }
 
-        //if (m_weapon.isShooting)
-        //{
-        //    SetState(CharacterStates.Shoot);
-        //    return;
-        //}
-
         // Has player landed?
         if (Landed())
         {
@@ -325,14 +307,10 @@ public class Player : MonoBehaviour, IHealth
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Fall);
             m_fallTimer = 0.0f;
             m_previousState = m_currentState;
+            m_anim.SetBool("Falling", true);
         }
 
         m_fallTimer += Time.deltaTime;
-
-        if(m_fallTimer > m_timeToStartTrail)
-        {
-            m_fallTrail.time = 0.1f;
-        }
 
         if (Landed())
         {
@@ -500,11 +478,6 @@ public class Player : MonoBehaviour, IHealth
         // Update koyote time
         m_koyoteTime = IsGrounded() ? 0.0f : m_koyoteTime + Time.deltaTime;
 
-        if (m_currentState != CharacterStates.Fall && m_fallTrail.time > 0f)
-        {
-            m_fallTrail.time -= Time.deltaTime * .5f;
-        }
-
         // Update current speed based on input
         if (m_moveInput.x == 0)
         {
@@ -515,16 +488,20 @@ public class Player : MonoBehaviour, IHealth
             m_currentSpeed += Time.deltaTime * m_increaseSpeed;
         }
 
-        if(m_changeDirectionTrail.time > 0f)
-        {
-            m_changeDirectionTrail.time -= Time.deltaTime;
-        }
-
         // Check if changed direction and decrease acceleration if so
         if ((int)m_moveInput.x != m_previousDirection)
         {
             m_currentSpeed = Mathf.Max(0, m_currentSpeed / 2);
-            m_changeDirectionTrail.time = (IsGrounded()) ? 0.5f : m_changeDirectionTrail.time;
+        }
+
+        // Flip the character
+        if(m_moveInput.x == 1)
+        {
+            m_playerModel.flipX = false;
+        }
+        else if (m_moveInput.x == -1)
+        {
+            m_playerModel.flipX = true;
         }
 
         m_previousDirection = (int)m_moveInput.x;
@@ -629,11 +606,6 @@ public class Player : MonoBehaviour, IHealth
 
     private void PressedJump()
     {
-        //if (m_weapon.isShooting)
-        //{
-        //    return;
-        //}
-
         if (!IsGrounded() && m_koyoteTime < m_maxKoyoteTime)
         {
             SetState(CharacterStates.Jump);
