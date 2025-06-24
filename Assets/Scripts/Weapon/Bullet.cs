@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     [Header("Values")]
     [SerializeField] private bool m_isActive = false;
     [SerializeField] private float m_speed = 10.0f;
+    [SerializeField] private float m_damage = 100f;
 
     [Header("Lifespan")]
     [SerializeField] private float m_lifeSpan = 0.0f;
@@ -57,6 +58,28 @@ public class Bullet : MonoBehaviour
         {
             m_isActive = false;
             m_sprite.enabled = false;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (m_isActive == false)
+        {
+            return;
+        }
+
+        if (other.gameObject.tag == Tags.GROUND_TAG)
+        {
+            m_lifeSpan = m_maxLifeSpan;
+            m_isActive = false;
+            m_sprite.enabled = false;
+            return;
+        }
+
+        if (other.TryGetComponent<Enemy>(out var enemy))
+        {
+            Debug.Log("[Enemy] Damaged enemy: " + enemy.name);
+            enemy.OnDamage(m_damage);
         }
     }
 
