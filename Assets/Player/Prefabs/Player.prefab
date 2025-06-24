@@ -347,6 +347,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6754832829804517415}
   - component: {fileID: 998562886273653130}
+  - component: {fileID: 8571762604416473402}
   m_Layer: 0
   m_Name: PlayerModel
   m_TagString: Untagged
@@ -363,9 +364,9 @@ Transform:
   m_GameObject: {fileID: 4915688186561146147}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0.48, z: 0}
+  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4830848032829068364}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -410,7 +411,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -6367560908665664636, guid: 3750f45c844123341b9a777a96cb1eca, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -421,6 +422,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &8571762604416473402
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915688186561146147}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7cd678af67a0717438f1dc07a82734c3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7158338793167620964
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,6 +495,8 @@ MonoBehaviour:
   m_currentState: 0
   m_previousState: 0
   m_squashAndStretch: {fileID: 5570208450548396936}
+  m_playerModel: {fileID: 998562886273653130}
+  m_anim: {fileID: 8571762604416473402}
   m_camZoom: {fileID: 0}
   m_camShake: {fileID: 0}
   m_groundedSpeed: 7.5
@@ -503,9 +527,6 @@ MonoBehaviour:
   m_groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  m_fallTrail: {fileID: 4766379485116240084}
-  m_changeDirectionTrail: {fileID: 3373257502709421504}
-  m_timeToStartTrail: 0.2
   m_playerUIPrefab: {fileID: -188902886172738824, guid: b1048934eb3564944a23753e6e8a35d6, type: 3}
   m_currentHealth: 0
   m_maxHealth: 100
@@ -772,7 +793,7 @@ MonoBehaviour:
   m_doubleJumpScale: {x: 3, y: 1.5}
   m_fallScale: {x: 0.5, y: 2}
   m_landScale: {x: 2, y: 0.25}
-  m_shootScale: {x: 0.5, y: 0.5}
+  m_shootScale: {x: 1, y: 1}
 --- !u!1 &8577153586803218547
 GameObject:
   m_ObjectHideFlags: 0
