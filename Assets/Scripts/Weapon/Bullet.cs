@@ -78,7 +78,6 @@ public class Bullet : MonoBehaviour
 
         if (other.TryGetComponent<Enemy>(out var enemy))
         {
-            Debug.Log("[Enemy] Damaged enemy: " + enemy.name);
             enemy.OnDamage(m_damage);
         }
     }

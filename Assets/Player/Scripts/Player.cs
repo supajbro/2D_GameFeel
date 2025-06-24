@@ -29,12 +29,15 @@ public class Player : MonoBehaviour, IHealth
     [SerializeField] private SquashAndStretchController m_squashAndStretch;
     [SerializeField] private SpriteRenderer m_playerModel;
     [SerializeField] private Animator m_anim;
-    [SerializeField] private CameraZoomController m_camZoom;
-    [SerializeField] private CameraShakeController m_camShake;
     private CharacterController m_controller;
     private PlayerWeapon m_weapon;
     private bool m_canMove = true;
     public bool CanMove => m_canMove;
+
+    [Header("Camera")]
+    [SerializeField] private Camera m_camPrefab;
+    CameraZoomController m_camZoom;
+    CameraShakeController m_camShake;
 
     [Header("Movement Values")]
     [SerializeField] private float m_groundedSpeed = 5.0f;
@@ -137,6 +140,11 @@ public class Player : MonoBehaviour, IHealth
         m_controls = new PlayerControls();
         m_canMove = true;
         m_controller = GetComponent<CharacterController>();
+
+        // Camera
+        var cam = Instantiate(m_camPrefab.gameObject);
+        m_camZoom = cam.GetComponent<CameraZoomController>();
+        m_camShake = cam.GetComponent<CameraShakeController>();
 
         // Weapon
         m_weapon = GetComponent<PlayerWeapon>();

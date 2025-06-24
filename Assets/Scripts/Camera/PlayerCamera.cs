@@ -22,6 +22,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Start()
     {
+        m_player = FindObjectOfType<Player>();
         m_cam = GetComponent<Camera>();
         m_camShake = GetComponent<CameraShakeController>();
     }

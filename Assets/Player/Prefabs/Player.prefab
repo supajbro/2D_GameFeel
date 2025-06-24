@@ -497,8 +497,7 @@ MonoBehaviour:
   m_squashAndStretch: {fileID: 5570208450548396936}
   m_playerModel: {fileID: 998562886273653130}
   m_anim: {fileID: 8571762604416473402}
-  m_camZoom: {fileID: 0}
-  m_camShake: {fileID: 0}
+  m_camPrefab: {fileID: 3196626560879063925, guid: 66331b1a5c123584aaa2716157e8f0b7, type: 3}
   m_groundedSpeed: 7.5
   m_airSpeed: 5
   m_currentSpeed: 0
