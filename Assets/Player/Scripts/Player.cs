@@ -176,40 +176,7 @@ public class Player : MonoBehaviour, IHealth
     }
     #endregion
 
-    private void StateUpdate()
-    {
-        switch(m_currentState)
-        {
-            case CharacterStates.Idle:
-                IdleUpdate();
-                break;
-
-            case CharacterStates.Walk:
-                WalkUpdate();
-                break;
-
-            case CharacterStates.Jump:
-                JumpUpdate();
-                break;
-
-            case CharacterStates.DoubleJump:
-                DoubleJumpUpdate();
-                break;
-
-            case CharacterStates.Fall:
-                FallUpdate();
-                break;
-
-            case CharacterStates.Land:
-                LandUpdate();
-                break;
-
-            case CharacterStates.Shoot:
-                ShootUpdate();
-                break;
-        }
-    }
-
+    #region - STATE UPDATE -
     private void IdleUpdate()
     {
         if (m_previousState != m_currentState)
@@ -222,11 +189,11 @@ public class Player : MonoBehaviour, IHealth
 
         m_currentSpeed = (m_currentSpeed > 0) ? m_currentSpeed - Time.deltaTime : 0f;
 
-        if (m_weapon.isShooting && m_weapon.CurrentAmmo > 0)
-        {
-            SetState(CharacterStates.Shoot);
-        }
-        else if (m_moveInput.x != 0 && IsGrounded())
+        //if (m_weapon.isShooting && m_weapon.CurrentAmmo > 0)
+        //{
+        //    SetState(CharacterStates.Shoot);
+        //}
+        /*else */if (m_moveInput.x != 0 && IsGrounded())
         {
             SetState(CharacterStates.Walk);
         }
@@ -247,11 +214,11 @@ public class Player : MonoBehaviour, IHealth
             m_previousState = m_currentState;
         }
 
-        if (m_weapon.isShooting)
-        {
-            SetState(CharacterStates.Shoot);
-        }
-        else if (m_moveInput.x == 0 && IsGrounded())
+        //if (m_weapon.isShooting)
+        //{
+        //    SetState(CharacterStates.Shoot);
+        //}
+       /* else*/ if (m_moveInput.x == 0 && IsGrounded())
         {
             SetState(CharacterStates.Idle);
         }
@@ -274,11 +241,11 @@ public class Player : MonoBehaviour, IHealth
             m_previousState = m_currentState;
         }
 
-        if (m_weapon.isShooting)
-        {
-            SetState(CharacterStates.Shoot);
-            return;
-        }
+        //if (m_weapon.isShooting)
+        //{
+        //    SetState(CharacterStates.Shoot);
+        //    return;
+        //}
 
         // Has player landed?
         if (m_jumpTimer > 0.5f)
@@ -323,11 +290,11 @@ public class Player : MonoBehaviour, IHealth
             m_previousState = m_currentState;
         }
 
-        if (m_weapon.isShooting)
-        {
-            SetState(CharacterStates.Shoot);
-            return;
-        }
+        //if (m_weapon.isShooting)
+        //{
+        //    SetState(CharacterStates.Shoot);
+        //    return;
+        //}
 
         // Has player landed?
         if (Landed())
@@ -402,6 +369,7 @@ public class Player : MonoBehaviour, IHealth
         //m_canMove = false;
         m_currentSpeed = 0f;
     }
+
     private void ShootUpdate()
     {
         if (m_previousState != m_currentState)
@@ -409,6 +377,8 @@ public class Player : MonoBehaviour, IHealth
             m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Shoot);
             m_previousState = m_currentState;
         }
+
+        m_squashAndStretch.SetSquashType(SquashAndStretchController.SquashAndStretchType.Shoot);
 
         PlayerWeapon weapon = m_weapon;
 
@@ -463,7 +433,9 @@ public class Player : MonoBehaviour, IHealth
         }
         return false;
     }
+    #endregion
 
+    #region - UPDATE -
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
@@ -480,22 +452,42 @@ public class Player : MonoBehaviour, IHealth
         }
 
         StateUpdate();
-
-        if (!IsGrounded())
-        {
-            m_koyoteTime += Time.deltaTime;
-        }
-        else
-        {
-            m_koyoteTime = 0.0f;
-        }
-
-        if(m_currentState != CharacterStates.Fall && m_fallTrail.time > 0f)
-        {
-            m_fallTrail.time -= Time.deltaTime * .5f;
-        }
-
         ControllerUpdate();
+    }
+
+    private void StateUpdate()
+    {
+        switch (m_currentState)
+        {
+            case CharacterStates.Idle:
+                IdleUpdate();
+                break;
+
+            case CharacterStates.Walk:
+                WalkUpdate();
+                break;
+
+            case CharacterStates.Jump:
+                JumpUpdate();
+                break;
+
+            case CharacterStates.DoubleJump:
+                DoubleJumpUpdate();
+                break;
+
+            case CharacterStates.Fall:
+                FallUpdate();
+                break;
+
+            case CharacterStates.Land:
+                LandUpdate();
+                break;
+        }
+
+        if (m_weapon.isShooting)
+        {
+            ShootUpdate();
+        }
     }
 
     private void ControllerUpdate()
@@ -505,6 +497,15 @@ public class Player : MonoBehaviour, IHealth
             return;
         }
 
+        // Update koyote time
+        m_koyoteTime = IsGrounded() ? 0.0f : m_koyoteTime + Time.deltaTime;
+
+        if (m_currentState != CharacterStates.Fall && m_fallTrail.time > 0f)
+        {
+            m_fallTrail.time -= Time.deltaTime * .5f;
+        }
+
+        // Update current speed based on input
         if (m_moveInput.x == 0)
         {
             m_currentSpeed = Mathf.Max(0, m_currentSpeed - Time.deltaTime * m_decreaseSpeed);
@@ -544,7 +545,9 @@ public class Player : MonoBehaviour, IHealth
         m_playerPos = new Vector2(m_xMovement, m_yMovement);
         m_controller.Move(m_playerPos);
     }
+    #endregion
 
+    #region - CHECKS -
     private bool IsGrounded()
     {
         Debug.DrawRay(m_leftPosition.position, Vector2.down * GroundRayLength, Color.red);
@@ -626,10 +629,10 @@ public class Player : MonoBehaviour, IHealth
 
     private void PressedJump()
     {
-        if (m_weapon.isShooting)
-        {
-            return;
-        }
+        //if (m_weapon.isShooting)
+        //{
+        //    return;
+        //}
 
         if (!IsGrounded() && m_koyoteTime < m_maxKoyoteTime)
         {
@@ -671,4 +674,5 @@ public class Player : MonoBehaviour, IHealth
         m_fallDelay = 0.0f;
         m_hasDoubleJumped = false;
     }
+    #endregion
 }
