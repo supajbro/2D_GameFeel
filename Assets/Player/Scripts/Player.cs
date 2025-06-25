@@ -387,7 +387,7 @@ public class Player : MonoBehaviour, IHealth
 
         weapon.Shoot();
 
-        if(!IsGrounded())
+        if(!IsGrounded() || m_koyoteTime < m_maxKoyoteTime)
         {
             Knockback(weapon);
         }
@@ -520,7 +520,7 @@ public class Player : MonoBehaviour, IHealth
             m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
         }
 
-        if (!m_weapon.isShooting)
+        if (!m_weapon.isShooting || m_koyoteTime < m_maxKoyoteTime)
         {
             // Control vertical movement
             m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeight;
