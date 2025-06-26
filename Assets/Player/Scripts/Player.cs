@@ -37,6 +37,7 @@ public class Player : MonoBehaviour, IHealth
     public void SetCanMove(bool value) { m_canMove = value; }
 
     [Header("Camera")]
+    public Camera Cam;
     [SerializeField] private Camera m_camPrefab;
     CameraZoomController m_camZoom;
     CameraShakeController m_camShake;
@@ -152,9 +153,9 @@ public class Player : MonoBehaviour, IHealth
         TransportPlayer(initPosition);
 
         // Camera
-        var cam = Instantiate(m_camPrefab.gameObject);
-        m_camZoom = cam.GetComponent<CameraZoomController>();
-        m_camShake = cam.GetComponent<CameraShakeController>();
+        Cam = Instantiate(m_camPrefab);
+        m_camZoom = Cam.GetComponent<CameraZoomController>();
+        m_camShake = Cam.GetComponent<CameraShakeController>();
 
         // Weapon
         m_weapon = GetComponent<PlayerWeapon>();

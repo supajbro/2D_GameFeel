@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class Screen : MonoBehaviour
+public class GameScreen : MonoBehaviour
 {
     [SerializeField] private ScreenManager.ScreenType m_screenType;
     [SerializeField] private RectTransform m_content;

@@ -25,6 +25,7 @@ public class LevelRules : MonoBehaviour
 
     [Header("Enemies")]
     private List<Enemy> m_enemies = new();
+    public List<Enemy> Enemies => m_enemies;
     public void AddEnemy(Enemy enemy)
     {
         m_enemies.Add(enemy);

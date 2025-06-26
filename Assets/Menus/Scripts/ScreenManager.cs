@@ -26,7 +26,7 @@ public class ScreenManager : MonoBehaviour
         ALLSCREENS
     }
 
-    [Header("Screens")]
+    [Header("Death Screen")]
     [SerializeField] private DeathScreen m_deathScreenPrefab;
     private DeathScreen m_deathScreen;
     public DeathScreen DeathScreen
@@ -35,9 +35,19 @@ public class ScreenManager : MonoBehaviour
         set => m_deathScreen = value;
     }
 
+    [Header("Enemy Indicator")]
+    [SerializeField] private Canvas m_enemyIndicatorPrefab;
+    private Canvas m_enemyIndicator;
+    public Canvas EnemyIndicator
+    {
+        get => m_enemyIndicator;
+        set => m_enemyIndicator = value;
+    }
+
     public void SpawnGameScreens()
     {
         m_deathScreen = Instantiate(m_deathScreenPrefab, transform);
+        m_enemyIndicator = Instantiate(m_enemyIndicatorPrefab, transform);
     }
 
     public void Open(ScreenType screen)
