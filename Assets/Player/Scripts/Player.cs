@@ -31,8 +31,10 @@ public class Player : MonoBehaviour, IHealth
     [SerializeField] private Animator m_anim;
     private CharacterController m_controller;
     private PlayerWeapon m_weapon;
+
     private bool m_canMove = true;
     public bool CanMove => m_canMove;
+    public void SetCanMove(bool value) { m_canMove = value; }
 
     [Header("Camera")]
     [SerializeField] private Camera m_camPrefab;
@@ -114,6 +116,11 @@ public class Player : MonoBehaviour, IHealth
     public Action<float> OnDamage;
     public void ChangeHealth(float health)
     {
+        if (!m_canMove)
+        {
+            return;
+        }
+
         m_currentHealth -= health;
         m_currentHealth = Mathf.Max(0, m_currentHealth);
 
@@ -127,11 +134,13 @@ public class Player : MonoBehaviour, IHealth
     {
         m_canMove = false;
         m_squashAndStretch.gameObject.SetActive(false);
+        ScreenManager.Instance.Open(ScreenManager.ScreenType.DeathScreen);
+        Debug.Log("[Restart] Restarted");
     }
     #endregion
 
     #region - INIT -
-    private void Awake()
+    public void Init(Vector2 initPosition)
     {
         // Initial state
         SetState(CharacterStates.Idle);
@@ -140,6 +149,7 @@ public class Player : MonoBehaviour, IHealth
         m_controls = new PlayerControls();
         m_canMove = true;
         m_controller = GetComponent<CharacterController>();
+        TransportPlayer(initPosition);
 
         // Camera
         var cam = Instantiate(m_camPrefab.gameObject);
@@ -157,10 +167,7 @@ public class Player : MonoBehaviour, IHealth
         // Health
         m_currentHealth = m_maxHealth;
         OnDamage += ChangeHealth;
-    }
 
-    private void OnEnable()
-    {
         m_controls.Enable();
 
         // Walking
@@ -173,6 +180,26 @@ public class Player : MonoBehaviour, IHealth
         // Shooting
         m_controls.Player.Shoot.performed += ctx => m_weapon.isShooting = true;
         m_controls.Player.Shoot.canceled += ctx => m_weapon.isShooting = false;
+    }
+
+    public void ReInit(Vector2 initPosition)
+    {
+        SetState(CharacterStates.Idle);
+        m_squashAndStretch.gameObject.SetActive(true);
+        m_canMove = true;
+        m_currentHealth = m_maxHealth;
+        TransportPlayer(initPosition);
+    }
+
+    private void TransportPlayer(Vector3 pos)
+    {
+        m_controller.enabled = false;
+        transform.position = pos;
+        m_controller.enabled = true;
+    }
+
+    private void OnEnable()
+    {
     }
 
     private void OnDisable()
@@ -387,17 +414,17 @@ public class Player : MonoBehaviour, IHealth
 
         weapon.Shoot();
 
-        if(!IsGrounded() || m_koyoteTime < m_maxKoyoteTime)
-        {
-            Knockback(weapon);
-        }
+        //if(!IsGrounded() /*|| m_koyoteTime < m_maxKoyoteTime*/)
+        //{
+        //    Knockback(weapon);
+        //}
 
-        if (!IsGrounded())
-        {
-            m_xMovement = 0f;
-        }
+        //if (!IsGrounded())
+        //{
+        //    m_xMovement = 0f;
+        //}
 
-        m_yMovement = 0f;
+        //m_yMovement = 0f;
     }
 
     private void Knockback(PlayerWeapon weapon)
@@ -520,7 +547,7 @@ public class Player : MonoBehaviour, IHealth
             m_xMovement = m_moveInput.x * m_currentSpeed * m_movementSpeed * Time.deltaTime;
         }
 
-        if (!m_weapon.isShooting || m_koyoteTime < m_maxKoyoteTime)
+        //if (!m_weapon.isShooting || m_koyoteTime < m_maxKoyoteTime)
         {
             // Control vertical movement
             m_yMovement = m_moveInput.y * Time.deltaTime * m_jumpHeight;

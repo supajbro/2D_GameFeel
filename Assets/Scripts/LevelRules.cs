@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,13 +18,49 @@ public class LevelRules : MonoBehaviour
     [Header("Game Prefabs")]
     [SerializeField] private Player m_playerPrefab;
 
+    [Header("Player")]
+    [SerializeField] private Vector2 m_initPosition = Vector2.zero;
     private Player m_currentPlayer;
     public Player CurrentPlayer => m_currentPlayer;
 
-    private void Awake()
+    [Header("Enemies")]
+    private List<Enemy> m_enemies = new();
+    public void AddEnemy(Enemy enemy)
     {
-        Instantiate(m_playerPrefab.gameObject);
-        m_currentPlayer = m_playerPrefab.GetComponent<Player>();
+        m_enemies.Add(enemy);
     }
 
+    private void Awake()
+    {
+        var player = Instantiate(m_playerPrefab.gameObject);
+        m_currentPlayer = player.GetComponent<Player>();
+        m_currentPlayer.Init(m_initPosition);
+    }
+
+    private void Start()
+    {
+        ScreenManager.Instance.SpawnGameScreens();
+        InitButtons();
+    }
+
+    private void InitButtons()
+    {
+        ScreenManager.Instance.DeathScreen.RestartAction += RestartLvl;
+        ScreenManager.Instance.DeathScreen.RestartBtn.onClick.AddListener(() =>
+        {
+            ScreenManager.Instance.DeathScreen.RestartAction?.Invoke();
+        });
+    }
+
+    public void RestartLvl()
+    {
+        m_currentPlayer.ReInit(m_initPosition);
+
+        foreach (var enemy in m_enemies)
+        {
+            enemy.ReInit();
+        }
+
+        ScreenManager.Instance.Close(ScreenManager.ScreenType.DeathScreen);
+    }
 }

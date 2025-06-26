@@ -67,9 +67,19 @@ public class Enemy : MonoBehaviour, IEnemy, IHealth
         gameObject.SetActive(false);
     }
     public Action<float> OnDamage;
+    private Vector2 m_initPosition = Vector2.zero;
 
     private void Awake()
     {
         OnDamage += ChangeHealth;
+        FindObjectOfType<LevelRules>().AddEnemy(this);
+        m_initPosition = transform.position;
+    }
+
+    public void ReInit()
+    {
+        m_canMove = true;
+        gameObject.SetActive(true);
+        transform.position = m_initPosition;
     }
 }

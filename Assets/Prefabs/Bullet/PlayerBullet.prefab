@@ -52,7 +52,7 @@ MonoBehaviour:
   m_speed: 25
   m_damage: 100
   m_lifeSpan: 0
-  m_maxLifeSpan: 1
+  m_maxLifeSpan: 0.4
 --- !u!65 &3182572639979744383
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -68,13 +68,13 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        if (other.gameObject.tag == Tags.GROUND_TAG)
-        {
-            m_lifeSpan = m_maxLifeSpan;
-            m_isActive = false;
-            m_sprite.enabled = false;
-            return;
-        }
+        //if (other.gameObject.tag == Tags.GROUND_TAG)
+        //{
+        //    m_lifeSpan = m_maxLifeSpan;
+        //    m_isActive = false;
+        //    m_sprite.enabled = false;
+        //    return;
+        //}
 
         if (other.TryGetComponent<Enemy>(out var enemy))
         {
